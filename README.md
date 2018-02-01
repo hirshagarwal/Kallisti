@@ -60,5 +60,5 @@ rostopic list
 ~~~~
 ### Install OpenCV Streamer
 ~~~~
-sudo get-apt install ros-indigo-video-stream-opencv
+sudo apt-get install ros-indigo-video-stream-opencv
 ~~~~

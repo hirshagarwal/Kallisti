@@ -47,7 +47,7 @@ git clone https://github.com/tum-vision/lsd_slam.git lsd_slam
 ### ROSmake Repair
 In order to succesfully run the ROSmake command two configuration files need the be changed:
 * rosbuild_ws/package_dir/lsd_slam/lsd_slam_viewer/cfg/LSDSLAMViewerParams.cfg
-* rosbuild_ws/package_dir/lsd_slam/lsd_slam_core/cfg/LSDParams.cfg
+* rosbuild_ws/package_dir/lsd_slam/lsd_slam_core/cfg/LSDDebugParams.cfg
 In each of these files replace all of the ' (single quotation marks) with \` (backtick) **except** in the first line.
 ~~~~
 rosmake lsd_slam

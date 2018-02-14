@@ -8,8 +8,11 @@ class Map:
     def addWall(self, newWall):
        self.walls.append(newWall)
 
+    def numWalls(self):
+        return len(self.walls)
+
     def getWalls(self):
-       return walls
+       return self.walls
 
 class Wall:
     def __init__(self, startPoint, endPoint):

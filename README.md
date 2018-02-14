@@ -1,4 +1,5 @@
 # Kallisti
+[![Build Status](https://travis-ci.com/hirshagarwal/Kallisti.svg?token=mSzPbV9PoZUsz4A2j2RR&branch=master)](https://travis-ci.com/hirshagarwal/Kallisti)
 System Design Project Repository
 
 # Installation Instructions

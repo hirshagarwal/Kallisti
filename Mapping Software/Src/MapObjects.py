@@ -4,7 +4,7 @@ import turtle
 
 class Map:
 
-    def __init__(self, points):
+    def __init__(self, points=[]):
         self.points = points
         if self.check_points():
             self.walls = [Wall(points[i], points[(i + 1) % len(points)])

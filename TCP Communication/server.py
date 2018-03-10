@@ -1,4 +1,7 @@
 import socket
+import sys
+sys.path.append("../Mapping Software")
+import Src.drawing_tcp_use
 
 # hostAddress = '' # Mac Address of Bluetooth Device
 hostAddress = 'localhost'

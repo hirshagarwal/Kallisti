@@ -3,8 +3,8 @@ import sys
 sys.path.append("../Mapping Software")
 import Src.drawing_tcp_use
 
-# hostAddress = '' # Mac Address of Bluetooth Device
-hostAddress = 'localhost'
+hostAddress = '60:57:18:3f:76:bc' # Mac Address of Bluetooth Device
+# hostAddress = 'localhost'
 port = 1
 backlog = 1
 size = 1024

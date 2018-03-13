@@ -2,8 +2,8 @@ import socket
 import json
 
 def connectToHost():
-	# serverAddress = '00:1f:e1:dd:08:3d' # Mac Address of Bluetooth Device
-	serverAddress = 'localhost'
+	serverAddress = '60:57:18:3f:76:bc' # Mac Address of Bluetooth Device
+	# serverAddress = 'localhost'
 	port = 1
 	# s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -347,7 +347,7 @@ def wallLoop(left_init, invariant_init):
             check_msg_2 = checkLeftWall(left_init, checking_distances2)
 
             # If both messages indicate a new wall, then it probably is
-            if check_msg_1 == err_new_wall && check_msg_2 == err_new_wall:
+            if check_msg_1 == err_new_wall and check_msg_2 == err_new_wall:
                 # break out of the loop
                 return (turn_left, distances[3])
             else:

@@ -176,7 +176,7 @@ class Wall:
         return "s.x = %f, s.y = %f ,e.x = %f, e.y = %f" %(self.startPoint.x, self.startPoint.y, self.endPoint.x, self.endPoint.y)
 
     def __eq__(self, other):
-        if self.a == other.a and self.k ==other.k and self.b == other.b:
+        if self.a == other.a and self.k == other.k and self.b == other.b:
             return True
         return False
 

@@ -241,7 +241,7 @@ def checkLeftWall(left_init, distances):
         return err_left_near
     # The measurement is 1 more than it was before (implying it has gone too far away)
     # This may be due to natural error in the instrument, or could be because of a new wall
-    elif variance > 1 && variance <= 10:
+    elif 1 < variance <= 10:
         #TODO check threshold of 10 is appropriate here.
         return err_left_far_moving
     else:
@@ -252,7 +252,7 @@ def checkLeftWall(left_init, distances):
 def checkInvariant(invariant_init, distances):
     variance = (distances[0] + distances[2]) - invariant_init
     # The measurements are within +/- 2 of the inital value
-    if --2 <= variance <= 2:
+    if -2 <= variance <= 2:
         return no_err
     # The measurements are at least 2 less than before (implying the invariant is too small now)
     elif variance < -2:
@@ -304,7 +304,7 @@ def wallLoop(left_init, invariant_init):
         check_invariant_msg = checkInvariant(invariant_init, distances)
 
         # There was no significant error detected
-        if check_left_msg == no_err && check_invariant_msg == no_err:
+        if check_left_msg == no_err and check_invariant_msg == no_err:
             # add the distances to the overall readings, (orientated correctly)
             new_point = toPoint(distances)
             distance_readings.append(new_point)

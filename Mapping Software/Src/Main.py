@@ -10,10 +10,18 @@ def main():
                 Point(100 + 50 * math.sqrt(3), 50, 120), Point(100, 0, 150)]
     points_3 = [Point(0, 0, 90), Point(0, 100, 90),
                 Point(100, 100, 135), Point(200, 0, 45)]
-    map = Map(points)
+    points_4 = [Point(0, 0, 90), Point(0, 100, 90), Point(100, 100, -90), Point(100, 200, 90), Point(200, 200, 90),
+                Point(200, 0, 90)]
+
+    points_simple = [Point(0, 0, 90), Point(0, 100, 90), Point(100, 100, 90), Point(100, 0, 90)]
+    map = Map(points_simple)
     #print(map.get_intersection(map.walls[0], map.walls[4]))
     map.segment()
     map.draw_map()
+    for wall in map.getWalls():
+        print(wall.startPoint)
+        print(wall.endPoint)
+
 
 
 if __name__ == "__main__":

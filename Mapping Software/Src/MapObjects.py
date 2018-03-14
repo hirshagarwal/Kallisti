@@ -58,12 +58,12 @@ class Map:
 
         # draw coordinate axis
         origin = Point(0, 0)
-        turtle.goto((1000, 0))
-        turtle.goto((-1000, 0))
-        turtle.goto((0, 0))
-        turtle.goto((0, 1000))
-        turtle.goto((0, -1000))
-        turtle.goto((0, 0))
+ #       turtle.goto((1000, 0))
+  #      turtle.goto((-1000, 0))
+   #     turtle.goto((0, 0))
+    #    turtle.goto((0, 1000))
+     #   turtle.goto((0, -1000))
+      #  turtle.goto((0, 0))
 
         # make the turtle go to the origin
         turtle.penup()
@@ -86,7 +86,7 @@ class Map:
             turtle.goto((line.startPoint.x, line.startPoint.y))
             turtle.pendown()
             turtle.goto((line.endPoint.x, line.endPoint.y))
-        turtle.done()
+        #turtle.done()
 
     # @param wall_m: new wall
     def get_intersection(self, wall_m, wall_n):
@@ -268,7 +268,9 @@ def rotate_by_alpha(V, a):  # rotate a vector by a in the XY-plane counter clock
 
     return((V[0] * math.cos(a) - V[1] * math.sin(a)), (V[0] * math.sin(a) + V[1] * math.cos(a)))
 
-
+"""
+A, B, C are Points
+"""
 def calculate_angle(A, B, C):   # function
 
     # vector from B to A - direction is important

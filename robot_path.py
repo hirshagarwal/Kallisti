@@ -90,7 +90,7 @@ def moveFORWARD(speed, t):
     avg_value = ((front1 - front2) + (back2 - back1)) / 2
     # print("avg: ", avg_value)
     updateLocation(avg_value)
-    print(self_location)
+    print(roundList(self_location))
 
 def moveBACKWARD(speed, time):
     moveFORWARD(-speed, time)
@@ -184,6 +184,7 @@ def orientateBackwards():
 
 def updateLocation(distance):
     global self_location
+    global orientation
     if orientation == 0: # Front
         self_location = (self_location[0],self_location[1] + distance)
     elif orientation == 1: # Right
@@ -196,6 +197,8 @@ def updateLocation(distance):
 
 
 def toPoint(distance):
+    global orientation
+    global self_location
     if orientation == 0: # Front
         #print(distance)
         return (self_location[0] - distance, self_location[1])
@@ -303,6 +306,7 @@ def checkLeftWall(left_init, distances):
         #TODO check threshold of 10 is appropriate here.
         return err_left_far_moving
     else:
+        print("Return new wall found")
         return err_new_wall
 
 # Check that the readings are close enough to the initial values for the invariant (vertical distance)
@@ -323,9 +327,9 @@ def checkInvariant(invariant_init, distances):
 # Loop to follow each wall until the robot comes back to its initial location
 def pathLoop(location, init_orientation=0):
     global self_location
+    global orientation
     init_location = location
     self_location = location
-    global orientation
     orientation = init_orientation
     not_start = True
     #print("right: ", getRightDistance())
@@ -372,8 +376,9 @@ def wallLoop(left_init, invariant_init):
         # There was no significant error detected
 
         if True:
+            print("Left Init: ", left_init)
         #if check_left_msg == no_err and check_invariant_msg == no_err:
-            # print("front", distances[0], "right", distances[1], "back", distances[2],  "left", distances[3])
+            print("front", round(distances[0],2), "right", round(distances[1],2), "back", round(distances[2],2),  "left", round(distances[3],2))
             # add the distances to the overall readings, (orientated correctly)
             new_point = toPoint(distances[3])
             distance_readings.append(new_point)
@@ -383,13 +388,17 @@ def wallLoop(left_init, invariant_init):
             if distances[0] > front_threshold:
                 # Move forward by some amount (can change)
                 moveFORWARD(100, 500)
-                continue
+                continue # TODO: Remove this
             # The distance is less, break from the loop and tell it to turn right next.
             else:
                 return (turn_right, distances[0])
+
+
+        print("Continuing Loop")
         # TODO cover case of invariant error - wasn't sure how best to respond
         # The left wall is too close (may be heading towards it)
         if check_left_msg == err_left_near:
+            print("Error left near")
             # Rotate right and move back slightly to try to fix the error
             rotateRightSmall()
             moveBackSmall()
@@ -398,6 +407,7 @@ def wallLoop(left_init, invariant_init):
 
         # The left wall is too far away - may be heading away from it as error is small
         if check_left_msg == err_left_far_moving:
+            print("Left far moving")
             # Rotate left and move back slightly to try to fix the error
             rotateLeftSmall()
             moveBackSmall()
@@ -405,6 +415,7 @@ def wallLoop(left_init, invariant_init):
 
         # A new wall has potentially been found.
         if check_left_msg == err_new_wall:
+            print("New wall found")
             # Move forward and back slightly and check the distances are the same
             # Done in case the error is simply due to an anomaly
             moveForwardSmall()
@@ -464,6 +475,7 @@ def moveForward(distance):
 
 
 if __name__ == "__main__":
-    while(not butt.up):
-        pass
+    print("Starting")
+    # while(not butt.up):
+        # pass
     pathLoop((14.5,17.5))

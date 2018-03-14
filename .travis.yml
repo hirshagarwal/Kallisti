@@ -8,3 +8,4 @@ install:
 script:
   - cd Mapping\ Software/Tests
   - python MapObjectTest.py
+  - python PointPlotterTest.py

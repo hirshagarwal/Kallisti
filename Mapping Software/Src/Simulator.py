@@ -90,7 +90,7 @@ class Robot:
 
             turtle.goto((current_location.x, current_location.y))
 
-            if current_location == initial_location:
+            if math.isclose(current_location.x, initial_location.x) and math.isclose(current_location.y, initial_location.y):
                 return "Finished"
 
             if info[0] == turn_right:

@@ -177,7 +177,7 @@ def check_lines_intersect_specific_both(lines):
 def check_lines_intersect_specific_one(lines):
     """
     Checks that two lines a) intersect and
-    b) that the intersection point is within the first line given (but not necessarily the second)
+    b) that the intersection point is within the lines
     :param lines:
     :return:
     """
@@ -191,7 +191,10 @@ def check_lines_intersect_specific_one(lines):
     x_max_1 = max(p1.x, p2.x)
     x_min_1 = min(p1.x, p2.x)
 
-    return x_min_1 <= poi.x <= x_max_1
+    y_max_1 = max(p1.y, p2.y)
+    y_min_1 = min(p1.y, p2.y)
+
+    return x_min_1 <= poi.x <= x_max_1 and y_min_1 <= poi.y <= y_max_1
 
 
 def point_of_intersection(lines):
@@ -236,10 +239,10 @@ def check_direction_of_line(points, angle):
 
 
 def main():
-    line_wall = Line(100, 100, 100, 200)
+    line_wall = Line(100, 0, 100, 200)
     line_robot = Line(10, 90, 11, 90)
-
-    print(check_lines_intersect_specific_one([line_robot] + [line_wall]))
+    print(point_of_intersection([line_robot] + [line_wall]))
+    print(check_lines_intersect_specific_one([line_wall] + [line_robot]))
 
 
 

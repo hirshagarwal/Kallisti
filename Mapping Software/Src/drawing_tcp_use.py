@@ -1,4 +1,5 @@
 import turtle
+import os
 
 self_location = (10, 10)
 
@@ -13,6 +14,28 @@ def start_drawing():
     turtle.goto((0, 500))
     turtle.goto((0, -500))
     turtle.goto((0, 0))
+    turtle.penup()
+
+    if os.path.exists("./blueprint.txt"):
+        with open("./blueprint.txt", 'r') as f:
+            lines = f.readlines()
+        first_location = format_string(lines[0])
+        turtle.goto((first_location[0], first_location[1]))
+        turtle.pendown()
+        for line in lines:
+            location = format_string(line)
+            turtle.goto(location[0], location[1])
+        turtle.goto((first_location[0], first_location[1]))
+        turtle.penup()
+
+
+
+def format_string(s):
+    s = s.strip()
+    s = s.replace('(', '')
+    s = s.replace(')', '')
+    data = [int(i) for i in s.split(',')]
+    return data
 
 
 # @param location: tuple (x, y)
@@ -40,14 +63,4 @@ def draw(location, flag = 0):
 def end_drawing():
     turtle.done()
 
-if __name__ == "__main__":
-  start_drawing()
 
-  draw((0.2, 10))
-  draw((-0.3, 10))
-  draw((10, 12), 1)
-  draw((0.33, 12))
-  draw((10, 50), 1)
-  draw((-0.6, 50))
-
-  end_drawing()

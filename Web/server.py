@@ -70,6 +70,8 @@ def newpoints():
     finally:
         lock.release()
 
+
+
 if __name__ =="__main__":
     try:
         tcp_server = threading.Thread(target = launch_TCP_server)

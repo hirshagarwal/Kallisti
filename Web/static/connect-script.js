@@ -4,8 +4,4 @@ $(document).ready(function() {
         $("#ip-p").html("Would you like to connect to " + ip_address+"?");
         $('.ui.basic.modal').modal('show');
     });
-
-    $("#confirm-yes").on('click', function(event) {
-        window.location.href = "blueprint.html";
-    });
 });

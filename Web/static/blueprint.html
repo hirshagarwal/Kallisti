@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <!-- Confirm box -->
     <div class="ui basic modal">
         <div class="ui icon header">
@@ -24,48 +23,56 @@
             <div class="ui red basic cancel inverted button">
                 <i class="remove icon"></i> No
             </div>
-            <div class="ui green ok inverted button">
+            <div class="ui green ok inverted button" id="confirm-yes">
                 <i class="checkmark icon"></i> Yes
             </div>
         </div>
     </div>
 
 
-    <div id="tab-wrapper">
-        <!-- first tab for input blueprint data -->
-        <div id="first-tab">
-            <!-- X and Y labels  -->
-            <div class="ui circular labels">
-                <a class="ui label" id="X-label">X</a>
-                <a class="ui label" id="Y-label">Y</a>
-            </div>
-            <!-- Input area -->
-            <div id="scrollable-area">
-                <div class="location-set-new">
-                    <div class="ui right pointing label">input data:</div>
-                    <div class="ui disabled input left">
-                        <input type="text" placeholder="0">
-                    </div>
-                    <div class="ui disabled input right">
-                        <input type="text" placeholder="0">
-                    </div>
-                    <i class="grey plus circle large icon" id="plus-icon"></i>
+    <!-- first tab for blueprint data input-->
+    <div id="first-tab">
+        <!-- X and Y labels  -->
+        <div class="ui circular labels">
+            <a class="ui label" id="X-label">X</a>
+            <a class="ui label" id="Y-label">Y</a>
+        </div>
+        <!-- Input area -->
+        <div id="scrollable-area">
+            <div class="location-set-new">
+                <div class="ui right pointing label">input data:</div>
+                <div class="ui disabled input left">
+                    <input type="text" placeholder="0">
                 </div>
-            </div>
-            <!-- Button area -->
-            <div id="buttons-area">
-                <div class="ui animated vertical primary button" tabindex="0" id="upload-button">
-                    <div class="visible content">Upload file</div>
-                    <div class="hidden content">
-                        <i class="arrow up icon"></i>
-                    </div>
+                <div class="ui disabled input right">
+                    <input type="text" placeholder="0">
                 </div>
-                <button class="ui button" id="finish-button">Skip</button>
+                <i class="grey plus circle large icon" id="plus-icon"></i>
             </div>
         </div>
-        <!-- Second tab for controlling the robot -->
-        <div id="second-tab">
-            <button class="ui button" id="start-button">Start</button>
+
+        <!-- Button area -->
+        <div id="buttons-area">
+            <input type="file" id="fileLoader" name="files" title="Load File" />
+            <div class="ui animated vertical primary button" tabindex="0" id="upload-button">
+                <div class="visible content">Upload file</div>
+                <div class="hidden content">
+                    <i class="arrow up icon"></i>
+                </div>
+            </div>
+            <button class="ui button" id="finish-button">Skip</button>
+        </div>
+    </div>
+    <!-- Second tab for controlling the robot -->
+    <div id="second-tab">
+        <div id="connection-status">
+            <a class="ui green basic label" id="connection-label">Robot Connection</a>
+            <a class="ui green label">Connected</a>
+        </div>
+        <div id="control-panel">
+            <button class="ui green button" id="start-button">Start</button>
+            <button class="ui button" id="stop-button" disabled="true">Stop</button>
+            <button class="ui button" id="modify-button">Modify blueprint</button>
         </div>
     </div>
     <!-- background elements and scripts -->

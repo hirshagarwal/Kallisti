@@ -29,15 +29,52 @@ $(document).ready(function(){
         }
         $(".location-set-new").after(new_locaiton_set);
         $(".location-set-new").first().addClass('location-set').removeClass('location-set-new');
+        $(".location-set-new > input").val("");
         $(".location-set-new").fadeIn();
         $(".location-set-new > .ui.input").removeClass('disabled');
         $("#plus-icon").removeClass('inverted');
     });
+
 
     $("#finish-button").on('click', function(event){
         if($("#finish-button").html()=="Skip")
         {
             $('.ui.basic.modal').modal('show');
         }
+        else{
+            $("#first-tab").fadeOut();
+            $("#second-tab").fadeIn();
+        }
+
+
+    });
+
+    $("#upload-button").on('click', function(event) {
+        $("#fileLoader").click();
+    });
+    $("#confirm-yes").on('click', function(event) {
+        $("#first-tab").fadeOut();
+        $("#second-tab").fadeIn();
+    });
+
+
+    $("#start-button").on('click', function(event) {
+        $("#start-button").attr('disabled', 'true');
+        $("#start-button").removeClass('green');
+        $("#stop-button").addClass('red');
+        $("#stop-button").removeAttr('disabled');
+
+        console.log("1");
+
+    });
+
+    $("#stop-button").on('click', function(event) {
+        $("#stop-button").attr('disabled', 'true');
+        $("#stop-button").removeClass('red');
+    });
+
+    $("#modify-button").on('click', function(event) {
+        $("#second-tab").fadeOut();
+        $("#first-tab").fadeIn();
     });
 });

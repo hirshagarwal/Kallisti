@@ -19,7 +19,8 @@ html, body{
     overflow:hidden;
 }
 
-#tab-wrapper{
+
+#first-tab{
     background: #f8f8f8;
     position: absolute;
     width: 400px;
@@ -32,18 +33,19 @@ html, body{
     border-radius: 5px;
 }
 
-#first-tab{
-    visibility: visible;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-}
-
 #second-tab{
-    visibility: hidden;
+    background: #f8f8f8;
     position: absolute;
-    height: 100%;
-    width: 100%;
+    width: 400px;
+    height: 250px;
+    z-index: 1;
+    display: block;
+    top: 50%;
+    left: 15%;
+    margin: -110px 0 0 -100px;
+    border-radius: 5px;
+
+    display: none;
 }   
 
 .ui.circular.labels{
@@ -118,10 +120,27 @@ html, body{
     top: 23px;
 }
 
+#fileLoader
+{
+    display:none;
+}
+
 #finish-button{
     position: relative;
     display: inline-block;
     top:2px;
+}
+
+#connection-status{
+    position: relative;
+    left: 20px;
+    top: 20px;
+}
+
+#control-panel{
+    position: absolute;
+    top:50%;
+    left:10%;
 }
 
 

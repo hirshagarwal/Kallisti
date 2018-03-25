@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="style/connect-page.css">
+    <link rel="stylesheet" type="text/css" href="style/semantic.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="script/semantic.js"></script>
+    <script src="script/connect-script.js"></script>
+    <title>Kallisti - Connect</title>
+</head>
+
+<body>
+    <!-- Confirm box -->
+    <div class="ui basic modal">
+        <div class="ui icon header">
+            <i class="wifi icon"></i> Ip Address Confirmation
+        </div>
+        <div class="content">
+            <p id="ip-p"></p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i> No
+            </div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i> Yes
+            </div>
+        </div>
+    </div>
+
+    <!-- Ip address form -->
+    <div id="address-form-div">
+        <img class="ui tiny circular image" src="image/Kallisti-logo.png">
+        <div class="ui icon input loading" id="ip-input">
+            <input type="text" placeholder="Ip address..." id="input-ip">
+        </div>
+        <div class="ui animated button" tabindex="0" id="ip-button">
+            <div class="visible content">Connect</div>
+            <div class="hidden content">
+                <i class="right arrow icon"></i>
+            </div>
+        </div>
+    </div>
+    <div id="particles-js"></div>
+
+    <!-- background element and script -->
+    <script src="script/particles.js"></script>
+    <script src="script/app.js"></script>
+</body>
+
+</html>

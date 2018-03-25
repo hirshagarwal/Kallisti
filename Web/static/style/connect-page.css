@@ -1,0 +1,70 @@
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+canvas{
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+
+
+html, body{
+    width:100vw;
+    height: 100vh;
+    overflow:hidden;
+}
+
+
+
+#particles-js{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #18b675;
+
+}
+
+
+#address-form-div {
+    background: #f8f8f8;
+    position: absolute;
+    width:200px;
+    height:220px;
+    z-index: 1;
+    display: block;
+    top:50%;
+    left:50%;
+    margin:-110px 0 0 -100px;
+    border-radius: 5px
+}
+
+#ip-input{
+    top: 56%;
+    position: absolute;
+    width: 160px;
+    left: 19px;
+}
+
+#ip-button{
+    top: 76%;
+    width: 160px;
+    left: 19px;
+    position: absolute;
+}
+#ip-form{
+    width:100%;
+    position: absolute;
+    height: 100%;
+}
+
+.ui.image{
+    left: 29%;
+    top: 20px;
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="style/blueprint-page.css">
+    <link rel="stylesheet" type="text/css" href="style/semantic.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="script/semantic.js"></script>
+    <script src="script/blueprint-script.js"></script>
+    <title>Kallisti - Blueprint</title>
+</head>
+
+<body>
+
+    <!-- Confirm box -->
+    <div class="ui basic modal">
+        <div class="ui icon header">
+            <i class="exclamation triangle icon"></i> No blueprint Data
+        </div>
+        <div class="content">
+            <p>You have not input any blueprint data yet, would you like to skip this step?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i> No
+            </div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i> Yes
+            </div>
+        </div>
+    </div>
+
+
+    <div id="tab-wrapper">
+        <!-- first tab for input blueprint data -->
+        <div id="first-tab">
+            <!-- X and Y labels  -->
+            <div class="ui circular labels">
+                <a class="ui label" id="X-label">X</a>
+                <a class="ui label" id="Y-label">Y</a>
+            </div>
+            <!-- Input area -->
+            <div id="scrollable-area">
+                <div class="location-set-new">
+                    <div class="ui right pointing label">input data:</div>
+                    <div class="ui disabled input left">
+                        <input type="text" placeholder="0">
+                    </div>
+                    <div class="ui disabled input right">
+                        <input type="text" placeholder="0">
+                    </div>
+                    <i class="grey plus circle large icon" id="plus-icon"></i>
+                </div>
+            </div>
+            <!-- Button area -->
+            <div id="buttons-area">
+                <div class="ui animated vertical primary button" tabindex="0" id="upload-button">
+                    <div class="visible content">Upload file</div>
+                    <div class="hidden content">
+                        <i class="arrow up icon"></i>
+                    </div>
+                </div>
+                <button class="ui button" id="finish-button">Skip</button>
+            </div>
+        </div>
+        <!-- Second tab for controlling the robot -->
+        <div id="second-tab">
+            <button class="ui button" id="start-button">Start</button>
+        </div>
+    </div>
+    <!-- background elements and scripts -->
+    <div id="particles-js"></div>
+    <script src="script/particles.js"></script>
+    <script src="script/app.js"></script>
+</body>
+
+</html>

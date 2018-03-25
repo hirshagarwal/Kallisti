@@ -1,0 +1,135 @@
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+canvas{
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+html, body{
+    width:100vw;
+    height: 100vh;
+    overflow:hidden;
+}
+
+#tab-wrapper{
+    background: #f8f8f8;
+    position: absolute;
+    width: 400px;
+    height: 500px;
+    z-index: 1;
+    display: block;
+    top: 30%;
+    left: 15%;
+    margin: -110px 0 0 -100px;
+    border-radius: 5px;
+}
+
+#first-tab{
+    visibility: visible;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#second-tab{
+    visibility: hidden;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}   
+
+.ui.circular.labels{
+    height: 50px;
+    width: 200px;
+    position: absolute;
+    left:50%;
+    top:10%;
+    margin: -25px 0 0 -100px;
+}
+
+
+
+#X-label{
+    position: absolute;
+    left:50px;
+    top:15px;
+}
+
+#Y-label{
+    position: absolute;
+    right:50px;
+    top:15px;
+}
+
+#scrollable-area{
+    position: absolute;
+    top:70px;
+    height: 350px;
+    width: 100%;
+}
+
+#buttons-area{
+    position: absolute;
+    height: 150px;
+    top: 430px;
+    left: 26%;
+}
+
+.location-set, .location-set-new{
+    height: 50px;
+    position: relative;
+    top:10px;
+    width: 200px;
+    left: 50%;
+    margin: 0 0 0 -100px;
+}
+
+.ui.input.left{
+    position: absolute;
+    left: 35px;
+    top: 15px;
+    width: 60px;
+}
+
+.ui.input.right{
+    position: absolute;
+    right: 35px;
+    top:15px;
+    width: 60px;
+}
+
+.ui.right.pointing.label{
+    position: absolute;
+    left: -60px;
+    top:20px;
+}
+
+#plus-icon{
+    right: -20px;
+    position: absolute;
+    top: 23px;
+}
+
+#finish-button{
+    position: relative;
+    display: inline-block;
+    top:2px;
+}
+
+
+
+#particles-js{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #18b675;
+
+}

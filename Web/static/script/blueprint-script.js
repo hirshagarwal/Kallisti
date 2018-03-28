@@ -1,5 +1,5 @@
-$(document).ready(function(){
-    
+$(document).ready(function() {
+
 
 
     $("#plus-icon").mouseenter(function(event) {
@@ -11,9 +11,9 @@ $(document).ready(function(){
     var input_flag = 0;
     var third_tab_flag = 0;
 
-    
+
     $("#plus-icon").on('click', function(event) {
-        if(input_flag == 0){
+        if (input_flag == 0) {
             input_flag = 1;
             $("#upload-button").removeClass('primary');
             $("#finish-button").addClass('primary');
@@ -24,8 +24,7 @@ $(document).ready(function(){
         new_locaiton_set.css('display', 'none'); // Fade in later.
 
         $("#plus-icon").remove();
-        if($(".location-set").length>4)
-        {
+        if ($(".location-set").length > 4) {
             $("#scrollable-area").css('overflow-y', 'scroll');
         }
         $(".location-set-new").after(new_locaiton_set);
@@ -37,12 +36,10 @@ $(document).ready(function(){
     });
 
 
-    $("#finish-button").on('click', function(event){
-        if($("#finish-button").html()=="Skip")
-        {
+    $("#finish-button").on('click', function(event) {
+        if ($("#finish-button").html() == "Skip") {
             $('.ui.basic.modal').modal('show');
-        }
-        else{
+        } else {
             $("#first-tab").fadeOut();
             $("#second-tab").fadeIn();
         }
@@ -67,28 +64,46 @@ $(document).ready(function(){
 
 
     $("#start-button").on('click', function(event) {
-        $("#start-button").attr('disabled', 'true');
-        $("#start-button").removeClass('green');
-        $("#stop-button").addClass('red');
-        $("#stop-button").removeAttr('disabled');
-
-        console.log("1");
-
+        $.ajax({
+            url: '/start-robot',
+            type: 'GET',
+            success: function() {
+                $("#start-button").attr('disabled', 'true');
+                $("#start-button").removeClass('green');
+                $("#stop-button").addClass('red');
+                $("#stop-button").removeAttr('disabled');
+            },
+            error: function() {
+                alert("Connection lost. Please examine the bluetooth connection.");
+                window.location.href = "/connect.html";
+            }
+        });
     });
 
     $("#stop-button").on('click', function(event) {
-        $("#stop-button").attr('disabled', 'true');
-        $("#stop-button").removeClass('red');
+        $.ajax({
+            url: '/stop-robot',
+            type: 'GET',
+            success: function() {
+                $("#stop-button").attr('disabled', 'true');
+                $("#stop-button").removeClass('red');
+            },
+            error:function(){
+                alert("Connection lost. Please examine the bluetooth connection.");
+            }
+
+        });
+
+
     });
 
     $("#modify-button").on('click', function(event) {
         $("#second-tab").fadeOut();
-        if(third_tab_flag ==1 ){
+        if (third_tab_flag == 1) {
             $("#third-tab").fadeIn();
-        }
-        else{
+        } else {
             $("#first-tab").fadeIn();
         }
-        
+
     });
 });

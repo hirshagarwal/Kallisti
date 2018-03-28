@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, request, send_from_directory, make_response
 import json
 import threading
 import socket
+import paramiko
 
 points = []
 lock = threading.Lock()
@@ -9,6 +10,7 @@ lock = threading.Lock()
 ip = "127.0.0.1"
 port = 5555
 size = 1024
+ssh = None
 
 
 
@@ -27,8 +29,6 @@ def launch_TCP_server():
         lock.acquire()
         try:
             points.append(data)
-            if len(points)>10:
-                points=[]
         finally:
             lock.release()
     s.close()
@@ -40,21 +40,29 @@ def launch_TCP_server():
 # Flask 
 app = Flask(__name__)
 
-@app.route('/index.html')
-def index():
-    return app.send_static_file("index.html")
+@app.route('/connect.html')
+def connect_page():
+    return app.send_static_file("connect.html")
 
-@app.route('/myscript.js')
-def vmyscript():
-    return app.send_static_file("myscript.js")
+@app.route('/blueprint.html')
+def blueprint_page():
+    return app.send_static_file("blueprint.html")
 
-@app.route('/control-panel.html')
-def control_panel():
-    return app.send_static_file("control-panel.html")
+# Return Js files
+@app.route('/script/<path:path>')
+def js_file(path):
+    return send_from_directory("static/script", path)
 
-@app.route('/drawing.js')
-def drawing_js():
-    return app.send_static_file("drawing.js")
+# Return Css files
+@app.route('/style/<path:path>')
+def style_file(path):
+    return send_from_directory('static/style', path)
+
+#Return Images
+@app.route('/image/<path:path>')
+def image_file(path):
+    return send_from_directory('static/image', path)
+
 
 @app.route('/newpoints')
 def newpoints():
@@ -69,6 +77,62 @@ def newpoints():
             return json.dumps({})
     finally:
         lock.release()
+
+@app.route('/ssh-connection')
+def ssh_connection():
+    global ip, ssh
+    ip = request.args["ip_address"]
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        ssh.connect(ip, username='robot', password='maker')
+        print("ssh no error")
+        resp = make_response("<html></html>", 200)
+        return resp 
+    except Exception as e:
+        print(e)
+        resp = make_response("<html></html>", 400)
+        return resp 
+
+
+@app.route('/start-robot')
+def start_robot():
+    stdin, stdout, stderr = ssh.exec_command("echo maker | sudo -S python3 robot_path.py start")
+    # Wait until command has been executed.
+    while True:
+        if stdout.channel.exit_status_ready() and stdout.channel.recv_ready():
+            break
+
+    # Receive Standard ouput stream
+    output=stdout.channel.recv(1024).decode("utf-8")
+    
+    # Examine output to check whether command get executed successfully.
+    if "OK" in output:
+        resp = make_response("<html></html>", 200)
+        return resp
+    else:
+        resp = make_response("<html></html>", 400)
+        return resp 
+
+@app.route('/stop-robot')
+def stop_robot():
+    stdin, stdout, stderr = ssh.exec_command("echo maker | sudo -S python3 robot_path.py stop")
+    # Wait until command has been executed.
+    while True:
+        if stdout.channel.exit_status_ready() and stdout.channel.recv_ready():
+            break
+
+    # Receive Standard ouput stream
+    output=stdout.channel.recv(1024).decode("utf-8")
+    
+    # Examine output to check whether command get executed successfully.
+    if "OK" in output:
+        resp = make_response("<html></html>", 200)
+        return resp
+    else:
+        resp = make_response("<html></html>", 400)
+        return resp 
+
 
 
 

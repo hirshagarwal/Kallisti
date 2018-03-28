@@ -28,8 +28,6 @@
             </div>
         </div>
     </div>
-
-
     <!-- first tab for blueprint data input-->
     <div id="first-tab">
         <!-- X and Y labels  -->
@@ -50,17 +48,53 @@
                 <i class="grey plus circle large icon" id="plus-icon"></i>
             </div>
         </div>
-
         <!-- Button area -->
         <div id="buttons-area">
-            <input type="file" id="fileLoader" name="files" title="Load File" />
-            <div class="ui animated vertical primary button" tabindex="0" id="upload-button">
-                <div class="visible content">Upload file</div>
+            <div class="ui animated vertical primary button" tabindex="0" id="draw-button">
+                <div class="visible content">Draw</div>
                 <div class="hidden content">
                     <i class="arrow up icon"></i>
                 </div>
             </div>
             <button class="ui button" id="finish-button">Skip</button>
+        </div>
+    </div>
+    <!-- third tab for draw blueprint data -->
+    <div id="third-tab">
+        <div class="ui labeled input">
+            <div class="ui label">
+                Length:
+            </div>
+            <input type="text" placeholder="10">
+        </div>
+        <div id="control-panel">
+            <div class="ui animated circular button" tabindex="0" id='btnDown'>
+                <div class="hidden content">Down</div>
+                <div class="visible content">
+                    <i class="arrow large grey down icon"></i>
+                </div>
+            </div>
+            <div class="ui animated circular button" tabindex="0" id='btnLeft'>
+                <div class="hidden content">Left</div>
+                <div class="visible content">
+                    <i class="arrow large grey left icon"></i>
+                </div>
+            </div>
+            <button class="circular ui icon button" id="draw-finish-button">
+                <i class="sign in alternate icon"></i>
+            </button>
+            <div class="ui animated circular button" tabindex="0" id='btnRight'>
+                <div class="hidden content">Right</div>
+                <div class="visible content">
+                    <i class="arrow large grey right icon"></i>
+                </div>
+            </div>
+            <div class="ui animated circular button" tabindex="0" id='btnUp'>
+                <div class="hidden content">Up</div>
+                <div class="visible content">
+                    <i class="arrow large grey up icon"></i>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Second tab for controlling the robot -->
@@ -75,6 +109,9 @@
             <button class="ui button" id="modify-button">Modify blueprint</button>
         </div>
     </div>
+
+    <!-- map canvas -->
+    <canvas id="map-tab"></canvas>
     <!-- background elements and scripts -->
     <div id="particles-js"></div>
     <script src="script/particles.js"></script>

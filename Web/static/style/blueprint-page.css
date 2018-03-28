@@ -1,4 +1,72 @@
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+html,
+body,
+div,
+span,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+abbr,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+samp,
+small,
+strong,
+sub,
+sup,
+var,
+b,
+i,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section,
+summary,
+time,
+mark,
+audio,
+video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -8,19 +76,20 @@ html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pr
     background: transparent;
 }
 
-canvas{
+canvas {
     display: inline-block;
     vertical-align: baseline;
 }
 
-html, body{
-    width:100vw;
+html,
+body {
+    width: 100vw;
     height: 100vh;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 
-#first-tab{
+#first-tab {
     background: #f8f8f8;
     position: absolute;
     width: 400px;
@@ -33,7 +102,7 @@ html, body{
     border-radius: 5px;
 }
 
-#second-tab{
+#second-tab {
     background: #f8f8f8;
     position: absolute;
     width: 400px;
@@ -46,109 +115,169 @@ html, body{
     border-radius: 5px;
 
     display: none;
-}   
+}
 
-.ui.circular.labels{
+#third-tab {
+    background: #f8f8f8;
+    position: absolute;
+    width: 350px;
+    height: 250px;
+    z-index: 1;
+    top: 50%;
+    left: 15%;
+    margin: -110px 0 0 -100px;
+    border-radius: 5px;
+    display: none;
+}
+
+#map-tab{
+    background: #f8f8f8;
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    z-index: 1;
+    top: 30%;
+    left:60%;
+    margin: -110px 0 0 -100px;
+    border-radius: 5px;
+}
+
+.ui.circular.labels {
     height: 50px;
     width: 200px;
     position: absolute;
-    left:50%;
-    top:10%;
+    left: 50%;
+    top: 10%;
     margin: -25px 0 0 -100px;
 }
 
 
 
-#X-label{
+#X-label {
     position: absolute;
-    left:50px;
-    top:15px;
+    left: 50px;
+    top: 15px;
 }
 
-#Y-label{
+#Y-label {
     position: absolute;
-    right:50px;
-    top:15px;
+    right: 50px;
+    top: 15px;
 }
 
-#scrollable-area{
+#scrollable-area {
     position: absolute;
-    top:70px;
+    top: 70px;
     height: 350px;
     width: 100%;
 }
 
-#buttons-area{
+#buttons-area {
     position: absolute;
     height: 150px;
     top: 430px;
     left: 26%;
 }
 
-.location-set, .location-set-new{
+.location-set,
+.location-set-new {
     height: 50px;
     position: relative;
-    top:10px;
+    top: 10px;
     width: 200px;
     left: 50%;
     margin: 0 0 0 -100px;
 }
 
-.ui.input.left{
+.ui.input.left {
     position: absolute;
     left: 35px;
     top: 15px;
     width: 60px;
 }
 
-.ui.input.right{
+.ui.input.right {
     position: absolute;
     right: 35px;
-    top:15px;
+    top: 15px;
     width: 60px;
 }
 
-.ui.right.pointing.label{
+.ui.right.pointing.label {
     position: absolute;
     left: -60px;
-    top:20px;
+    top: 20px;
 }
 
-#plus-icon{
+#plus-icon {
     right: -20px;
     position: absolute;
     top: 23px;
 }
 
-#fileLoader
-{
-    display:none;
+#fileLoader {
+    display: none;
 }
 
-#finish-button{
+#finish-button {
     position: relative;
     display: inline-block;
-    top:2px;
+    top: 2px;
 }
 
-#connection-status{
+#connection-status {
     position: relative;
     left: 20px;
     top: 20px;
 }
 
-#control-panel{
+#control-panel {
     position: absolute;
-    top:50%;
-    left:10%;
+    top: 50%;
+    left: 10%;
 }
 
 
 
-#particles-js{
+#particles-js {
     position: absolute;
     width: 100%;
     height: 100%;
     background-color: #18b675;
+}
 
+#btnLeft {
+    position: relative;
+    left: -10px;
+}
+
+#btnRight {
+    position: relative;
+    left: 10px;
+}
+
+#btnUp {
+    position: relative;
+    top: -50px;
+    left: -135px;
+}
+
+#btnDown {
+    position: relative;
+    top: 50px;
+    left: 135px;
+}
+
+#control-panel{
+    position: absolute;
+    top: 120px;
+    width: 100%;
+    margin-left: -35px;
+}
+
+.ui.labeled.input{
+    position: absolute;
+    width: 100px;
+    left: 10px;
+    top: 5px;
 }

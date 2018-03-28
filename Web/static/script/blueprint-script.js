@@ -9,6 +9,7 @@ $(document).ready(function(){
     });
 
     var input_flag = 0;
+    var third_tab_flag = 0;
 
     
     $("#plus-icon").on('click', function(event) {
@@ -49,11 +50,18 @@ $(document).ready(function(){
 
     });
 
-    $("#upload-button").on('click', function(event) {
-        $("#fileLoader").click();
+    $("#draw-button").on('click', function(event) {
+        third_tab_flag = 1;
+        $("#first-tab").fadeOut();
+        $("#third-tab").fadeIn();
     });
     $("#confirm-yes").on('click', function(event) {
         $("#first-tab").fadeOut();
+        $("#second-tab").fadeIn();
+    });
+
+    $("#draw-finish-button").on('click', function(event) {
+        $("#third-tab").fadeOut();
         $("#second-tab").fadeIn();
     });
 
@@ -75,6 +83,12 @@ $(document).ready(function(){
 
     $("#modify-button").on('click', function(event) {
         $("#second-tab").fadeOut();
-        $("#first-tab").fadeIn();
+        if(third_tab_flag ==1 ){
+            $("#third-tab").fadeIn();
+        }
+        else{
+            $("#first-tab").fadeIn();
+        }
+        
     });
 });

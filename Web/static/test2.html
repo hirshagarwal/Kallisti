@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+
+<head>
+    <!--     <link rel="stylesheet" type="text/css" media="all" href="css/reset.css" /> -->
+    <link rel="stylesheet" type="text/css" href="style/semantic.css">
+    <!-- reset css -->
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="script/semantic.js"></script>
+    <style>
+    body {
+        background-color: ivory;
+    }
+
+    canvas {
+        border: 1px solid red;
+        border-radius: 5px;
+    }
+
+    #btnLeft {
+        position: relative;
+        left: -10px;
+    }
+
+    #btnRight {
+        position: relative;
+        left: 10px;
+    }
+
+    #btnUp {
+        position: relative;
+        top: -50px;
+        left: -110px;
+    }
+
+    #btnDown {
+        position: relative;
+        top: 50px;
+        left: 120px;
+    }
+    </style>
+    <script>
+    $(function() {
+
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.translate(250, 250);
+        var pos = canvas.getContext("2d");
+        pos.fillStyle = 'darkblue';
+
+        var length = 10
+        var $length = document.getElementById('length');
+        $length.value = length;
+
+        var x1 = 0;
+        var y1 = 0;
+        var x2 = 0;
+        var y2 = 0;
+
+        var direction = ''
+
+
+        draw();
+
+        document.getElementById("btnRight").addEventListener("click", function() {
+            length = $length.value;
+            direction = 'right';
+            draw();
+        });
+
+        document.getElementById("btnLeft").addEventListener("click", function() {
+            length = $length.value;
+            direction = 'left';
+            draw();
+        });
+
+        document.getElementById("btnUp").addEventListener("click", function() {
+            length = $length.value;
+            direction = 'up';
+            draw();
+        });
+
+        document.getElementById("btnDown").addEventListener("click", function() {
+            length = $length.value;
+            direction = 'down';
+            draw();
+        });
+
+        function draw() {
+            if (direction == 'right') {
+                ctx.moveTo(x1, y1);
+                x2 = x1 + parseInt(length);
+                ctx.lineTo(x2, y2);
+                //ctx.arc(x2, y2, 40, 0, 2 * Math.PI);
+                //pos.translate(x2, y2);
+                pos.clearRect(x1, y1, 10, 10);
+                pos.fillRect(x2, y2, 10, 10);
+                ctx.stroke();
+                //pos.setTransform(1, 0, 0, 1, 0, 0);
+                x1 = x2;
+                y1 = y2;
+            }
+
+            if (direction == 'left') {
+                ctx.moveTo(x1, y1);
+                x2 = x1 - parseInt(length);
+                ctx.lineTo(x2, y2);
+                //ctx.arc(x2, y2, 40, 0, 2 * Math.PI);
+                //pos.translate(x2, y2);
+                pos.clearRect(x1, y1, 10, 10);
+                pos.fillRect(x2, y2, 10, 10);
+                ctx.stroke();
+                //pos.setTransform(1, 0, 0, 1, 0, 0);
+                x1 = x2;
+                y1 = y2;
+            }
+
+            if (direction == 'up') {
+                ctx.moveTo(x1, y1);
+                y2 = y1 - parseInt(length);
+                ctx.lineTo(x2, y2);
+                //ctx.arc(x2, y2, 40, 0, 2 * Math.PI);
+                //pos.translate(x2, y2);
+                pos.clearRect(x1, y1, 10, 10);
+                pos.fillRect(x2, y2, 10, 10);
+                ctx.stroke();
+                //pos.setTransform(1, 0, 0, 1, 0, 0);
+                x1 = x2;
+                y1 = y2;
+            }
+
+            if (direction == 'down') {
+                ctx.moveTo(x1, y1);
+                y2 = y1 + parseInt(length);
+                ctx.lineTo(x2, y2);
+                //ctx.arc(x2, y2, 40, 0, 2 * Math.PI);
+                //pos.translate(x2, y2);
+                pos.clearRect(x1, y1, 10, 10);
+                pos.fillRect(x2, y2, 10, 10);
+                ctx.stroke();
+                //pos.setTransform(1, 0, 0, 1, 0, 0);
+                x1 = x2;
+                y1 = y2;
+            }
+
+        }
+
+    }); // end $(function(){});
+    </script>
+</head>
+
+<body>
+    length:
+    <input type="text" id="length">
+    <br>
+    <!--     <button type="button" id='btnRight'>Right</button>
+    <button type="button" id='btnLeft'>Left</button>
+    <button type="button" id='btnUp'>Up</button>
+    <button type="button" id='btnDown'>Down</button> -->
+    <div class="ui animated circular button" tabindex="0" id='btnDown'>
+        <div class="hidden content">Down</div>
+        <div class="visible content">
+            <i class="arrow large grey down icon"></i>
+        </div>
+    </div>
+    <div class="ui animated circular button" tabindex="0" id='btnLeft'>
+        <div class="hidden content">Left</div>
+        <div class="visible content">
+            <i class="arrow large grey left icon"></i>
+        </div>
+    </div>
+    <div class="ui animated circular button" tabindex="0" id='btnRight'>
+        <div class="hidden content">Right</div>
+        <div class="visible content">
+            <i class="arrow large grey right icon"></i>
+        </div>
+    </div>
+    <div class="ui animated circular button" tabindex="0" id='btnUp'>
+        <div class="hidden content">Up</div>
+        <div class="visible content">
+            <i class="arrow large grey up icon"></i>
+        </div>
+    </div>
+    <canvas id="canvas" width=300 height=300></canvas>
+</body>
+
+</html>

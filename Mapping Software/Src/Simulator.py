@@ -1,7 +1,7 @@
 from PointPlotter import *
 from MapObjects import *
-import math
 from turtle import *
+import numpy as np
 
 wall_lines = []
 turn_left = "left"
@@ -53,6 +53,7 @@ class Robot:
             if check_lines_intersect_specific_one(checking_lines):
                 poi = point_of_intersection(checking_lines)
                 points = [Point(self.x, self.y), poi]
+                # if the robot is in the right direction to the wall
                 if check_direction_of_line(points, adjusted_angle):
                     # get the distance from the robot to that wall
                     distance = abs(line.a * self.x + line.b * self.y - line.c) / math.sqrt(
@@ -114,6 +115,32 @@ class Robot:
                 return turn_right, total_distance
             self.move(10)
             total_distance += 10
+
+    def get_reading_unreliable(self, angle, absolute_error):
+        """
+        Gets a distance reading, but adds a degree of error to it
+        :param angle:
+        :return:
+        """
+        true_distance = self.get_reading(angle)
+        # If the true distance is between 0-15 cm, the error is larger
+        if 0 < true_distance < 15:
+            uncertain_distances = np.random.normal(true_distance, absolute_error)
+        # Reduce error for closer distances
+        elif 15 <= true_distance < 30:
+            return np.random.normal(true_distance, 0.5*absolute_error)
+        # Normal error amount for longer distances
+        elif 30 <= true_distance < 200:
+            return np.random.normal(true_distance, absolute_error)
+        # Greater error for larger distances
+        elif 200 <= true_distance < 250:
+            return np.random.normal(true_distance, 1.5*absolute_error)
+        else:
+            return np.random.normal(true_distance, 15*absolute_error)
+
+
+
+
 
 
 def main():

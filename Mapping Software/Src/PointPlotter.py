@@ -1,5 +1,6 @@
 from MapObjects import *
 import math
+import numpy as np
 from statistics import mean
 from vectors import Vector
 
@@ -43,6 +44,7 @@ class Line:
 
     def __str__(self):
         return "Point 1 = " + str(self.point1) + " Point 2 = " + str(self.point2)
+
 
 def get_second_point(point, angle):
     # Convert starting angle from radians to degrees
@@ -237,13 +239,77 @@ def check_direction_of_line(points, angle):
         return False
 
 
+def find_line_params(points, num_iterations, thresh_dist, inlier_ratio):
+    """
+    Uses the RANSAC algorithm to find the parameters of a line from a set of points with possible outliers
+    Based from the MATLAB algorithm in https://en.wikipedia.org/wiki/Random_sample_consensus
+    :param points: an Nx2 matrix containing all the points
+    :param num_iterations: #iterations
+    :param thresh_dist: threshold of distances between points and the fitting line
+    :param inlier_ratio: threshold of the number of inliers
+    :return: (a, b, c) from the equation ax + by + c = 0
+    IMPORTANT: If a, b, c are all returned as 0 then no line was found. You may need to run the loop again
+    """
+    number = points.shape[0] # Total number of points
+    best_in_num = 0 # Best fitting line with largest number of inliers
+    best_a = 0
+    best_b = 0
+    best_c = 0 # parameters for best fitting
+
+
+    for i in range(0, num_iterations):
+        # Randomly select 2 points
+        np.random.shuffle(points)
+        sample = points[:2, :]
+
+        k_line = sample[0, :] - sample[1, :] # two points relative distance
+        k_line_norm = k_line/np.linalg.norm(k_line)
+
+        norm_vector = [-k_line_norm[1], k_line_norm[0]] # Ax + By + c = 0 A = -k_line_norm[1], B = k_line_norm[0]
+
+        distance = np.dot(points - np.tile(sample[0, :], (number, 1)), norm_vector)
+
+        # Compute the inliers with distances smaller than the threshold
+        inlier_idx = np.nonzero(abs(distance) <= thresh_dist)[0]
+
+        inlier_num = len(inlier_idx)
+        # Update the number of inliers and fitting model if better model is found
+
+        if inlier_num >= round(inlier_ratio*number) and inlier_num > best_in_num:
+            best_in_num = inlier_num
+            x_diff = (sample[1, 0] - sample[0, 0])
+            if x_diff != 0:
+                # line is not vertical
+                # y = mx + c  --> rearrange to mx - y + c = 0 (Ax + By + C = 0)
+                best_a = (sample[1, 1] - sample[0, 1])/x_diff
+                best_c = sample[0, 1] - best_a * sample[0, 0]
+                best_b = -1
+            else:
+                # line is vertical, i.e. of the form x = C
+                best_a = 1
+                best_b = 0
+                best_c = sample[1, 0]
+
+    return best_a, best_b, best_c
+
+
+def convert_points_to_matrix(points):
+    """
+    Converts a list of points to an Nx2 matrix
+    :param points: list of all points
+    :return: points in a matrix form (for multiplying etc.)
+    """
+    n = len(points)
+    matrix = np.zeros((n, 2))
+    for idx, point in enumerate(points):
+        matrix[(idx, 0)] = point.x
+        matrix[(idx, 1)] = point.y
+
+    return matrix
+
 
 def main():
-    line_wall = Line(100, 0, 100, 200)
-    line_robot = Line(10, 90, 11, 90)
-    print(point_of_intersection([line_robot] + [line_wall]))
-    print(check_lines_intersect_specific_one([line_wall] + [line_robot]))
-
+    print("Goodbye cruel world")
 
 
 if __name__ == "__main__":

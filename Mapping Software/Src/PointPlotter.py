@@ -245,8 +245,8 @@ def find_line_params(points, num_iterations, thresh_dist, inlier_ratio):
     Based from the MATLAB algorithm in https://en.wikipedia.org/wiki/Random_sample_consensus
     :param points: an Nx2 matrix containing all the points
     :param num_iterations: #iterations
-    :param thresh_dist: threshold of distances between points and the fitting line
-    :param inlier_ratio: threshold of the number of inliers
+    :param thresh_dist: threshold of distances between points and the fitting line to be counted as close
+    :param inlier_ratio: threshold of the number of inliers required e.g. 0.4 = 40%
     :return: (a, b, c) from the equation ax + by + c = 0
     IMPORTANT: If a, b, c are all returned as 0 then no line was found. You may need to run the loop again
     """
@@ -255,7 +255,6 @@ def find_line_params(points, num_iterations, thresh_dist, inlier_ratio):
     best_a = 0
     best_b = 0
     best_c = 0 # parameters for best fitting
-
 
     for i in range(0, num_iterations):
         # Randomly select 2 points

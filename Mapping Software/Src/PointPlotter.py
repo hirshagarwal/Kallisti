@@ -309,7 +309,7 @@ def convert_points_to_matrix(points):
 
 
 def main():
-    print("Goodbye cruel world")
+    print("Goodbye cruel world...")
 
 
 if __name__ == "__main__":

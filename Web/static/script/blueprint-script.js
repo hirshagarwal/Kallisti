@@ -88,7 +88,7 @@ $(document).ready(function() {
                 $("#stop-button").attr('disabled', 'true');
                 $("#stop-button").removeClass('red');
             },
-            error:function(){
+            error: function() {
                 alert("Connection lost. Please examine the bluetooth connection.");
             }
 
@@ -106,4 +106,32 @@ $(document).ready(function() {
         }
 
     });
+
+
+    function start_robot() {
+
+        
+        setInterval(function() {
+            $.ajax({
+                url: '/newpoints',
+                type: 'GET',
+                success: function(response) {
+                    var json_data = $.parseJSON(response);
+                    json_data.forEach(function(item) {
+
+
+                        var re_location = /\((.+?),\s?(.+?)\)/
+                        var x = parseFloat(item.location.match(re_location)[1]);
+                        var y = parseFloat(item.lcoation.match(re_location)[2]);
+                        if (item.type == "points") {
+                            dot(x, y);
+                        } else if (item.type == "self_location") {
+                            line(x, y);
+                        }
+                    });
+                }
+            });
+
+        }, 2000);
+    }
 });

@@ -7,8 +7,8 @@ import paramiko
 points = []
 lock = threading.Lock()
 
-ip = "127.0.0.1"
-port = 5555
+address = "28:C2:DD:44:20:C8"
+port = 8888
 size = 1024
 ssh = None
 
@@ -17,14 +17,14 @@ ssh = None
 
 def launch_TCP_server():
     global points
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((ip, port))
+    s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+    s.bind((address, port))
     s.listen(1)
     conn, addr = s.accept()
     print("Connection address:", addr)
     while True:
         data = conn.recv(size).decode('utf-8')
-        print(data)
+        print("receive: ", data)
         data = json.loads(data)
         lock.acquire()
         try:

@@ -37,12 +37,17 @@
         </div>
         <!-- Input area -->
         <div id="scrollable-area">
-            <div class="location-set-new">
+            <div class="location-set-new" id="id0">
                 <div class="ui right pointing label">input data:</div>
-                <div class="ui disabled input left">
+                <!-- <div class="ui disabled input left">
                     <input type="text" placeholder="0">
                 </div>
                 <div class="ui disabled input right">
+                    <input type="text" placeholder="0"> -->
+                <div class="ui input left">
+                    <input type="text" placeholder="0">
+                </div>
+                <div class="ui input right">
                     <input type="text" placeholder="0">
                 </div>
                 <i class="grey plus circle large icon" id="plus-icon"></i>
@@ -65,7 +70,7 @@
             <div class="ui label">
                 Length:
             </div>
-            <input type="text" placeholder="10">
+            <input type="text" id = "draw input" placeholder="10">
         </div>
         <div id="control-panel">
             <div class="ui animated circular button" tabindex="0" id='btnDown'>
@@ -111,7 +116,7 @@
     </div>
 
     <!-- map canvas -->
-    <canvas id="map-tab"></canvas>
+    <canvas id="map-tab" width="500" height="500"></canvas>
 
     
     <!-- background elements and scripts -->

@@ -443,6 +443,59 @@ def moveForward(distance):
             exit()
 
 
+def find_90_rotate_left(time_rotation):
+    """
+    Test function to get the robot to rotate in place so that it finds a minimum
+    Assuming robot is moving away
+    """
+    min_left = getLeftDistance()
+    found_min = False
+
+    # TODO test which time of rotation as a minimum works best
+    if time_rotation < 25:
+        # Stop recursing and finish
+        return
+
+    while not found_min:
+        # TODO test which values work best for very small movements
+        rotateLEFT(100, time_rotation)
+        new_left = getLeftDistance()
+        # If the value is greater the robot must have rotated past the minimum
+        if new_left > min_left:
+            found_min = True
+
+    # Go back to the point just before the previous minimum
+    rotateRIGHT(100, time_rotation*2)
+    find_90_rotate_left(time_rotation / 2)
+
+
+def find_90_rotate_right(time_rotation):
+    """
+    Test function to get the robot to rotate in place so that it finds a minimum.
+    Assuming robot is moving towards the wall
+    """
+    min_left = getLeftDistance()
+    found_min = False
+
+    # TODO test which time of rotation as a minimum works best
+    if time_rotation < 25:
+        # Stop recursing and finish
+        return
+
+    while not found_min:
+        # TODO test which values work best for very small movements
+        rotateRIGHT(100, time_rotation)
+        new_left = getLeftDistance()
+        # If the value is greater the robot must have rotated past the minimum
+        if new_left > min_left:
+            found_min = True
+
+    # Go back twice and start rotating again more slowly
+    rotateLEFT(100, time_rotation*2)
+    find_90_rotate_right(time_rotation / 2)
+
+
+
 if __name__ == "__main__":
     while(not butt.up):
         pass

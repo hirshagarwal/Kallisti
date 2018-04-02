@@ -219,7 +219,6 @@ $(document).ready(function() {
                 $("#start-button").removeClass('green');
                 $("#stop-button").addClass('red');
                 $("#stop-button").removeAttr('disabled');
-		        start_robot();
             },
             error: function() {
                 alert("Connection lost. Please examine the bluetooth connection.");
@@ -273,7 +272,6 @@ $(document).ready(function() {
 
                         var x = parseFloat(item.x);
                         var y = parseFloat(item.y);
-                        console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
                         if (item.type == "points") {
                             dot(x, y);
                         } else if (item.type == "self_location") {

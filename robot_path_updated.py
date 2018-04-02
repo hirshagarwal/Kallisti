@@ -461,7 +461,9 @@ def find_90_rotate_left(time_rotation):
         rotateLEFT(100, time_rotation)
         new_left = getLeftDistance()
         # If the value is greater the robot must have rotated past the minimum
-        if new_left > min_left:
+        if new_left <= min_left:
+            min_left = new_left
+        else:
             found_min = True
 
     # Go back to the point just before the previous minimum
@@ -487,7 +489,9 @@ def find_90_rotate_right(time_rotation):
         rotateRIGHT(100, time_rotation)
         new_left = getLeftDistance()
         # If the value is greater the robot must have rotated past the minimum
-        if new_left > min_left:
+        if new_left <= min_left:
+            min_left = new_left
+        else:
             found_min = True
 
     # Go back twice and start rotating again more slowly
@@ -499,4 +503,4 @@ def find_90_rotate_right(time_rotation):
 if __name__ == "__main__":
     while(not butt.up):
         pass
-    pathLoop((14.5,17.5))
+    pathLoop((14.5, 17.5))

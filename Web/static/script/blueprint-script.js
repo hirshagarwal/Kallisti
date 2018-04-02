@@ -264,12 +264,14 @@ $(document).ready(function() {
                 type: 'GET',
                 success: function(response) {
                     var json_data = $.parseJSON(response);
+                    
+                    if(json_data.length==0)
+                        return;
+
                     json_data.forEach(function(item) {
 
-
-                        var re_location = /\((.+?),\s?(.+?)\)/
-                        var x = parseFloat(item.location.match(re_location)[1]);
-                        var y = parseFloat(item.lcoation.match(re_location)[2]);
+                        var x = parseFloat(item.x);
+                        var y = parseFloat(item.y);
                         if (item.type == "points") {
                             dot(x, y);
                         } else if (item.type == "self_location") {

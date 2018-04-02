@@ -6,7 +6,7 @@ $(document).ready(function() {
     });
 
     $("#confirm-yes").on('click', function(event) {
-        var ip_format = /[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}./;
+        var ip_format = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/;
         var ip = $("#input-ip").val()
         if (ip_format.test(ip)) {
             $.ajax({

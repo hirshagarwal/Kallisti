@@ -8,7 +8,7 @@ points = []
 lock = threading.Lock()
 
 address = "28:C2:DD:44:20:C8"
-port = 8888
+channel = 1
 size = 1024
 ssh = None
 
@@ -18,7 +18,7 @@ ssh = None
 def launch_TCP_server():
     global points
     s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-    s.bind((address, port))
+    s.bind((address, channel))
     s.listen(1)
     conn, addr = s.accept()
     print("Connection address:", addr)
@@ -97,7 +97,9 @@ def ssh_connection():
 
 @app.route('/start-robot')
 def start_robot():
-    stdin, stdout, stderr = ssh.exec_command("echo maker | sudo -S python3 robot_path.py start")
+    stdin, stdout, stderr = ssh.exec_command("sudo -S python3 robot_path.py start")
+    stdin.write("maker\n")
+    stdin.flush()
     # Wait until command has been executed.
     while True:
         if stdout.channel.exit_status_ready() and stdout.channel.recv_ready():
@@ -116,23 +118,21 @@ def start_robot():
 
 @app.route('/stop-robot')
 def stop_robot():
-    stdin, stdout, stderr = ssh.exec_command("echo maker | sudo -S python3 robot_path.py stop")
+    stdin, stdout, stderr = ssh.exec_command("sudo -S kill -9 $(cat '/var/run/daemonocle_example.pid')")
+    stdin.write("maker\n")
+    stdin.flush()
     # Wait until command has been executed.
-    while True:
-        if stdout.channel.exit_status_ready() and stdout.channel.recv_ready():
-            break
+    # while True:
+    #     if stdout.channel.exit_status_ready() and stdout.channel.recv_ready():
+    #         break
 
-    # Receive Standard ouput stream
-    output=stdout.channel.recv(1024).decode("utf-8")
+    # # Receive Standard ouput stream
+    # output=stdout.channel.recv(1024).decode("utf-8")
     
     # Examine output to check whether command get executed successfully.
-    if "OK" in output:
-        resp = make_response("<html></html>", 200)
-        return resp
-    else:
-        resp = make_response("<html></html>", 400)
-        return resp 
 
+    resp = make_response("<html></html>", 200)
+    return resp
 
 
 

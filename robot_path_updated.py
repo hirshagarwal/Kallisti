@@ -603,8 +603,6 @@ def path_loop_2():
         walls.append(find_new_wall(wall_length))
 
 
-
-
 def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
     left_distances = [left_init_dist, 0]
     front_distances = [0]
@@ -624,7 +622,7 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
 
         # If a new wall is found, return the total length of the wall
         if check_new_wall(left_init_dist, new_left):
-            wall_length = calculate_wall_length()
+            wall_length = calculate_wall_length(wall_length,  )
             return turn_left, wall_length
 
         elif new_front <= front_threshold:
@@ -659,8 +657,11 @@ def calculate_wall_length(prev_length, left_init, left_current, front_travelled)
         length_2 = math.sin(theta)*left_init
 
     else:
-        theta = math.atan(front_travelled/x_diff)
-        length_2 = math.cos(theta)*left_current
+        if x_diff != 0:
+            theta = math.atan(front_travelled/x_diff)
+            length_2 = math.cos(theta)*left_current
+        else:
+            length_2 = 0
 
     return prev_length + length_1 + length_2
 
@@ -678,7 +679,7 @@ def correct_error_far(left_init, left_current, front_travelled, prev_wall_length
 def rotate_left_to_distance(dist_target, dist_init, time):
     prev_left = dist_init
     while True:
-        rotateLEFT(100, time)
+        rotateLeftSmall()
         new_left = getLeftDistance()
         if is_close(dist_target, new_left, 2):
             break
@@ -693,10 +694,17 @@ def correct_error_near(left_init, left_current, front_travelled, prev_wall_lengt
 
 
 def is_close(num_1, num_2, threshold):
-    return math.abs(num_1 - num_2) <= threshold
+    return abs(num_1 - num_2) <= threshold
+
+
+def is_very_different(num_1, num_2):
+    return abs(num_1 - num_2) >= 10
 
 
 if __name__ == "__main__":
-    while(not butt.up):
-        pass
-    pathLoop((14.5, 17.5))
+    init = 800
+    while (init >= 25):
+        print("time of rotation = ".format(init))
+        rotateLEFT(300, init)
+        init = init/2
+    print("Finished")

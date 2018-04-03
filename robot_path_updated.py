@@ -273,19 +273,19 @@ def getDistances():
 
 
 def moveForwardSmall():
-    moveFORWARD(100, 100)
+    moveFORWARD(100, 500)
 
 
 def moveBackSmall():
-    moveBACKWARD(100, 100)
+    moveBACKWARD(100, 500)
 
 
 def rotateLeftSmall():
-    rotateLEFT(100, 100)
+    rotateLEFT(100, 500)
 
 
 def rotateRightSmall():
-    rotateRIGHT(100, 100)
+    rotateRIGHT(100, 500)
 
 
 # Check that the readings are close enough to the initial values for the left wall
@@ -461,60 +461,67 @@ def moveForward(distance):
             exit()
 
 
-def find_90_rotate_left(time_rotation):
+def find_90_rotate(power_rotation, direction):
     """
     Test function to get the robot to rotate in place so that it finds a minimum
     Assuming robot is moving away
     """
+    print("rotating right with power: {}".format(power_rotation))
     min_left = getLeftDistance()
-    found_min = False
 
-    # TODO test which time of rotation as a minimum works best
-    if time_rotation < 25:
+    if power_rotation <= 100:
         # Stop recursing and finish
         return
 
-    while not found_min:
-        # TODO test which values work best for very small movements
-        rotateLEFT(100, time_rotation)
+    while True:
+        if direction == "left":
+            rotateLEFT(power_rotation, 150)
+        else:
+            rotateRIGHT(power_rotation, 150)
         new_left = getLeftDistance()
         # If the value is greater the robot must have rotated past the minimum
         if new_left <= min_left:
             min_left = new_left
         else:
-            found_min = True
+            break
 
-    # Go back to the point just before the previous minimum
-    rotateRIGHT(100, time_rotation*2)
-    find_90_rotate_left(time_rotation / 2)
+    if direction == "left":
+        find_90_rotate(power_rotation / 2, "right")
+    else:
+        find_90_rotate(power_rotation / 2, "left")
 
 
-def find_90_rotate_right(time_rotation):
+def find_90_rotate_time(time_rotation, direction):
     """
-    Test function to get the robot to rotate in place so that it finds a minimum.
-    Assuming robot is moving towards the wall
+    Test function to get the robot to rotate in place so that it finds a minimum
+    Assuming robot is moving away
     """
+    print("rotating right with power: {}".format(time_rotation))
     min_left = getLeftDistance()
-    found_min = False
 
-    # TODO test which time of rotation as a minimum works best
-    if time_rotation < 25:
+    if time_rotation <= 100:
         # Stop recursing and finish
         return
 
-    while not found_min:
-        # TODO test which values work best for very small movements
-        rotateRIGHT(100, time_rotation)
+    while True:
+        if direction == "left":
+            rotateLEFT(150, time_rotation)
+        else:
+            rotateRIGHT(150, time_rotation)
         new_left = getLeftDistance()
         # If the value is greater the robot must have rotated past the minimum
         if new_left <= min_left:
             min_left = new_left
         else:
-            found_min = True
+            # Double check that the distance is indeed greater
+            check_left = getLeftDistance()
+            if check_left > min_left:
+                break
 
-    # Go back twice and start rotating again more slowly
-    rotateLEFT(100, time_rotation*2)
-    find_90_rotate_right(time_rotation / 2)
+    if direction == "left":
+        find_90_rotate(time_rotation / 2, "right")
+    else:
+        find_90_rotate(time_rotation / 2, "left")
 
 
 def should_rotate_left():
@@ -546,9 +553,9 @@ def move_to_start_convex_corner(time_step):
     # If this is the first time the robot has moved, rotate to 90 degrees.
     if time_step == initial_time_step:
         if should_rotate_left():
-            find_90_rotate_left(time_step)
+            find_90_rotate(time_step, "left")
         else:
-            find_90_rotate_right(time_step)
+            find_90_rotate(time_step, "right")
 
     # TODO test which level of recursion you should stop at.
     if time_step < 25:
@@ -702,9 +709,4 @@ def is_very_different(num_1, num_2):
 
 
 if __name__ == "__main__":
-    init = 800
-    while (init >= 25):
-        print("time of rotation = ".format(init))
-        rotateLEFT(300, init)
-        init = init/2
-    print("Finished")
+    find_90_rotate_time(800, "left")

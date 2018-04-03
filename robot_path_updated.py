@@ -1,10 +1,5 @@
-#print("Please wait...") # Encourage patience :-)
-
-
-
 import ev3dev.ev3 as ev3
-import getch
-from statistics import mean, pvariance, mode
+from statistics import mean, pvariance
 from collections import Counter
 import time
 #from client import *
@@ -59,6 +54,10 @@ turn_left = "Left"
 # TODO test threshold and find appropriate value - chosen arbitrarily currently
 front_threshold = 18.5
 
+# TODO test initial_time_step and find appropriate value
+initial_time_step = 100
+
+left_corner_threshold = 10
 
 # String values for different orientations - easier to pass as arguments
 orient_front = "Front" # 0
@@ -70,7 +69,6 @@ orient_left = "Left" # 3
 # remember to initialise
 self_location = (14.5, 17.5) # (x, y)
 orientation = 0
-
 
 
 def moveFORWARD(speed, t):
@@ -96,6 +94,7 @@ def moveFORWARD(speed, t):
     updateLocation(avg_value)
     print(self_location)
 
+
 def moveBACKWARD(speed, time):
     moveFORWARD(-speed, time)
 
@@ -105,11 +104,10 @@ def moveRIGHT(speed, time):
     rightMotor.run_timed(speed_sp = speed, time_sp = time)
     leftMotor.run_timed(speed_sp = -speed, time_sp = time)
 
+
 def moveLEFT(speed, time):
     rightMotor.run_timed(speed_sp = -speed, time_sp = time)
     leftMotor.run_timed(speed_sp = speed, time_sp = time)
-
-
 
 
 def rotateLEFT(speed, time):
@@ -117,6 +115,7 @@ def rotateLEFT(speed, time):
     rightMotor.run_timed(speed_sp = speed, time_sp = time)
     backMotor.run_timed(speed_sp = speed, time_sp = time)
     leftMotor.run_timed(speed_sp = speed, time_sp = time)
+
 
 def rotateRIGHT(speed, time):
     frontMotor.run_timed(speed_sp = -speed, time_sp = time)
@@ -152,8 +151,10 @@ def orientateLeft():
     backSensor = ult[2]
     leftSensor = ult[3]
 
+
 def orientateForwards():
     pass
+
 
 def orientateRight():
     print("right")
@@ -184,9 +185,11 @@ def orientateRight():
     backSensor = ult[2]
     leftSensor = ult[3]
 
+
 def orientateBackwards():
     orientateLeft()
     orientateLeft()
+
 
 def updateLocation(distance):
     global self_location
@@ -213,16 +216,18 @@ def toPoint(distance):
         return (self_location[0], self_location[1] - distance)
 
 
-
 def getFrontDistance():
     return getSingleDistanceHelper(frontSensor)
+
 
 def getRightDistance():
     return getSingleDistanceHelper(rightSensor)
 
+
 def getBackDistance():
     # print("Get Back Distance: ", backSensor == ult4)
     return getSingleDistanceHelper(backSensor)
+
 
 def getLeftDistance():
     return getSingleDistanceHelper(leftSensor)
@@ -256,12 +261,14 @@ def getDistances():
 def moveForwardSmall():
     moveFORWARD(100, 100)
 
+
 def moveBackSmall():
     moveBACKWARD(100, 100)
 
 
 def rotateLeftSmall():
     rotateLEFT(100, 100)
+
 
 def rotateRightSmall():
     rotateRIGHT(100, 100)
@@ -285,11 +292,12 @@ def checkLeftWall(left_init, distances):
     else:
         return err_new_wall
 
+
 # Check that the readings are close enough to the initial values for the invariant (vertical distance)
 # distances are a list of [F, R, B, L]
 def checkInvariant(invariant_init, distances):
     variance = (distances[0] + distances[2]) - invariant_init
-    # The measurements are within +/- 2 of the inital value
+    # The measurements are within +/- 2 of the initial value
     if -2 <= variance <= 2:
         return no_err
     # The measurements are at least 2 less than before (implying the invariant is too small now)
@@ -308,9 +316,6 @@ def pathLoop(location, init_orientation=0):
     global orientation
     orientation = init_orientation
     not_start = True
-    #print("right: ", getRightDistance())
-    #print("back: ", getBackDistance())
-    #exit()
     left_init = getLeftDistance()
     invariant_init = getFrontDistance() + getBackDistance()
     while not_start or not same_location(self_location, init_location):
@@ -319,10 +324,6 @@ def pathLoop(location, init_orientation=0):
         left_init, invariant_init = toNextWall(direction, distance)
        # print(self_location)
        # print(init_location)
-
-
-
-
 
 
 # Loop to follow a single wall
@@ -338,7 +339,7 @@ def pathLoop(location, init_orientation=0):
 # Keep track and store as (position, distance readings) tuple perhaps?
 # Main problem: orientation changes
 def wallLoop(left_init, invariant_init):
-    # Stores disatnce readings (all in a list, could change)
+    # Stores distance readings (all in a list, could change)
     distance_readings = []
     while True:
 
@@ -412,11 +413,13 @@ def wallLoop(left_init, invariant_init):
             moveBackSmall()
             continue
 
+
 # This method can only be called after wallLoop()
 def same_location(location1, location2):
     if (location1[0]-location2[0])**2 + (location1[1]-location2[1])**2 < 5**2:
         return True
     return False
+
 
 def toNextWall(direction, distance_to_prev_wall):
     half_width_of_robot = 15
@@ -429,7 +432,8 @@ def toNextWall(direction, distance_to_prev_wall):
         orientateRight()
     next_left_init = getLeftDistance()
     next_invariant_init = getFrontDistance() + getBackDistance()
-    return (next_left_init, next_invariant_init)
+    return next_left_init, next_invariant_init
+
 
 def moveForward(distance):
     front1 = front2 = getFrontDistance()
@@ -438,7 +442,7 @@ def moveForward(distance):
         moveForwardSmall()
         front2 = getFrontDistance()
         back2 = getBackDistance()
-        if(front2 < front_threshold):
+        if front2 < front_threshold:
             print("too close!")
             exit()
 
@@ -498,6 +502,56 @@ def find_90_rotate_right(time_rotation):
     rotateLEFT(100, time_rotation*2)
     find_90_rotate_right(time_rotation / 2)
 
+
+def should_rotate_left():
+    """
+    Finds if the robot needs to rotate left or right to obtain the minimum distance
+    :return:
+    """
+    dist_2 = getLeftDistance()
+    rotateLeftSmall()
+    dist_1 = getLeftDistance()
+    rotateRightSmall()
+    rotateRightSmall()
+    dist_3 = getLeftDistance()
+
+    # If the min distance was the rightmost one, need to go further right to find min
+    if dist_3 <= dist_2 and dist_3 <= dist_1:
+        return False
+    # If the min distance was in the middle, or on the left, then you need to rotate left
+    else:
+        return True
+
+
+def move_to_start_convex_corner(time_step):
+    """
+    Makes the robot move to the start of a convex corner
+    :param: time_step - time to move forwards/back for
+    :return:
+    """
+    # If this is the first time the robot has moved, rotate to 90 degrees.
+    if time_step == initial_time_step:
+        if should_rotate_left():
+            find_90_rotate_left(time_step)
+        else:
+            find_90_rotate_right(time_step)
+
+    # TODO test which level of recursion you should stop at.
+    if time_step < 25:
+        # Stop recursion
+        return
+
+    dist_left = getLeftDistance()
+    gone_too_far = False
+    while not gone_too_far:
+        moveBACKWARD(100, time_step)
+        new_dist_left = getLeftDistance()
+        if abs(new_dist_left - dist_left) >= left_corner_threshold:
+            gone_too_far = True
+
+    moveFORWARD(100, time_step)
+    # Recurse with smaller time steps
+    move_to_start_convex_corner(time_step/2)
 
 
 if __name__ == "__main__":

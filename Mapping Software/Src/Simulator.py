@@ -139,10 +139,6 @@ class Robot:
             return np.random.normal(true_distance, 15*absolute_error)
 
 
-
-
-
-
 def main():
     points_4 = [Point(0, 0, 90), Point(0, 100, 90), Point(100, 100, -90), Point(100, 200, 90), Point(200, 200, 90),
                 Point(200, 0, 90)]

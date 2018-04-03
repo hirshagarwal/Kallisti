@@ -46,6 +46,30 @@ class Line:
         return "Point 1 = " + str(self.point1) + " Point 2 = " + str(self.point2)
 
 
+class Wall90:
+    def __init__(self, direction, c):
+        """
+        Create a new 90-degree wall
+        :param direction: takes values of "h" or "v" (standing for horizontal and vertical)
+        :param c: constant for the equation x = c or y = c
+        """
+        if direction == "h" or direction == "v" and isinstance(c, int):
+            self.direction = direction
+            self.c = c
+        else:
+            print("Invalid arguments given.")
+
+    def get_direction(self):
+        return self.direction
+
+    def get_c(self):
+        return self.c
+
+
+
+
+
+
 def get_second_point(point, angle):
     # Convert starting angle from radians to degrees
     angle_rad = math.radians(angle)
@@ -305,6 +329,14 @@ def convert_points_to_matrix(points):
         matrix[(idx, 1)] = point.y
 
     return matrix
+
+def convert_params_to_wall_start(a, b, c):
+    """
+    Converts the parameters for the second wall to a wall since the first wall is always given by x = 0
+    :param a, b, c: Values of the equation Ax + By = C for the second wall:
+    :return:
+    """
+
 
 
 def main():

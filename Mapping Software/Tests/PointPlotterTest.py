@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.append("..")
-from Src.PointPlotter import *
+from PointPlotter import *
 
 
 """

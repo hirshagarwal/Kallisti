@@ -1,7 +1,9 @@
 import ev3dev.ev3 as ev3
 from statistics import mean, pvariance
 from collections import Counter
+from MapObjects import Wall, Point
 import time
+import math
 #from client import *
 
 m1=ev3.LargeMotor('outA')   # front
@@ -69,6 +71,12 @@ orient_left = "Left" # 3
 # remember to initialise
 self_location = (14.5, 17.5) # (x, y)
 orientation = 0
+
+
+start_point = Point(0, 0)
+end_point = start_point
+
+orientations = ["up", "right", "down", "left"]
 
 
 def moveFORWARD(speed, t):
@@ -151,6 +159,9 @@ def orientateLeft():
     backSensor = ult[2]
     leftSensor = ult[3]
 
+    temp_orient = orientations.pop()
+    orientations.insert(0, temp_orient)
+
 
 def orientateForwards():
     pass
@@ -184,6 +195,9 @@ def orientateRight():
     rightSensor = ult[1]
     backSensor = ult[2]
     leftSensor = ult[3]
+
+    temp_orient = orientations.pop(0)
+    orientations.append(temp_orient)
 
 
 def orientateBackwards():
@@ -552,6 +566,134 @@ def move_to_start_convex_corner(time_step):
     moveFORWARD(100, time_step)
     # Recurse with smaller time steps
     move_to_start_convex_corner(time_step/2)
+
+
+def find_new_wall(distance):
+    global end_point
+    temp_point = end_point
+    x = end_point.x
+    y = end_point.y
+    cur_orientation = current_orientation()
+    if cur_orientation == "up":
+        end_point = Point(x, y + distance)
+        return Wall(temp_point, end_point)
+    elif orientations == "down":
+        end_point = Point(x, y - distance)
+        return Wall(temp_point, end_point)
+    elif cur_orientation == "left":
+        end_point = Point(x - distance, y)
+        return Wall(temp_point, end_point)
+    else:
+        end_point = Point(x + distance, y)
+        return Wall(temp_point, end_point)
+
+
+def current_orientation():
+    return orientations[0]
+
+
+def path_loop_2():
+    left_init = getLeftDistance()
+    front_init = getFrontDistance()
+    back_dist = getBackDistance()
+    walls = []
+
+    while True:
+        next_instruction, wall_length = wall_loop_2()
+        walls.append(find_new_wall(wall_length))
+
+
+
+
+def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
+    left_distances = [left_init_dist, 0]
+    front_distances = [0]
+    front_distance_travelled = 0
+    wall_length = wall_init_length
+
+    front_temp = front_init_dist
+
+    while True:
+        moveFORWARD(100, 500)
+        new_left = getLeftDistance()
+        new_front = getFrontDistance()
+        front_change = front_temp - new_front
+        front_temp = new_front
+        front_distance_travelled += front_change
+        left_distances[1] = new_left
+
+        # If a new wall is found, return the total length of the wall
+        if check_new_wall(left_init_dist, new_left):
+            wall_length = calculate_wall_length()
+            return turn_left, wall_length
+
+        elif new_front <= front_threshold:
+            return turn_right, wall_length
+
+        elif err_check_too_far(left_init_dist, new_left):
+            correct_error_far(left_init_dist, new_left, front_distance_travelled)
+
+        elif err_check_too_close(left_init_dist, new_left):
+            correct_error_near(left_init_dist, new_left, front_distance_travelled)
+
+
+def err_check_too_close(left_init, left_current):
+    return left_init - left_current >= 2
+
+
+def err_check_too_far(left_init, left_current):
+    return left_current - left_init >= 2
+
+
+def check_new_wall(left_init, left_current):
+    # Check if the current reading is a new wall, and repeats to be sure
+    return left_current - left_init >= left_corner_threshold and getLeftDistance() - left_init >= left_corner_threshold
+
+
+# Calculates length of wall, allowing for the robot to have moved away somewhat.
+def calculate_wall_length(prev_length, left_init, left_current, front_travelled):
+    x_diff = abs(left_init - left_current)
+    length_1 = math.sqrt(x_diff*x_diff + front_travelled*front_travelled)
+    if left_init <= left_current:
+        theta = math.atan(x_diff/front_travelled)
+        length_2 = math.sin(theta)*left_init
+
+    else:
+        theta = math.atan(front_travelled/x_diff)
+        length_2 = math.cos(theta)*left_current
+
+    return prev_length + length_1 + length_2
+
+
+def correct_error_far(left_init, left_current, front_travelled, prev_wall_length):
+    x_diff = left_current - left_init
+    theta = math.atan(front_travelled/x_diff)
+    expected_left = math.sin(theta)*left_current
+    rotate_left_to_distance(expected_left, left_init, initial_time_step)
+
+    wall_removed = math.cos(theta)*left_current
+    new_wall_length = prev_wall_length - wall_removed
+
+
+def rotate_left_to_distance(dist_target, dist_init, time):
+    prev_left = dist_init
+    while True:
+        rotateLEFT(100, time)
+        new_left = getLeftDistance()
+        if is_close(dist_target, new_left, 2):
+            break
+        else:
+            #TODO finish
+            continue
+
+
+def correct_error_near(left_init, left_current, front_travelled, prev_wall_length):
+    #TODO finish
+    pass
+
+
+def is_close(num_1, num_2, threshold):
+    return math.abs(num_1 - num_2) <= threshold
 
 
 if __name__ == "__main__":

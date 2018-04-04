@@ -170,7 +170,6 @@ def getSingleDistanceHelper(sensor):
     # while True:
     #     # The deviation of Ultrasonic Sensor is within 1 cm. If the standard variance of
     #     # a set of readings is greater than 1 (supposed to be 1), it must contains invalid data.
-    #     #TODO find a appropriate value for standard variance
     #     if pvariance(distances) > 1:
     #         # Always trust smaller readings and remove larger ones.
     #         num_to_remove = max(distances)
@@ -184,10 +183,6 @@ def getSingleDistanceHelper(sensor):
     #             return most_common_value
     #         else:
     #             return mean(distances)
-
-
-def get_distances():
-    return [getFrontDistance(), getRightDistance(), getBackDistance(), getLeftDistance()]
 
 
 def move_forward_small():
@@ -211,32 +206,6 @@ def same_location(location1, location2):
     if (location1[0]-location2[0])**2 + (location1[1]-location2[1])**2 < 5**2:
         return True
     return False
-
-
-def toNextWall(direction):
-    half_width_of_robot = 15
-    ideal_distance_to_wall = 11
-    if direction == turn_left:
-        move_forward(half_width_of_robot + ideal_distance_to_wall)
-        orientateLeft()
-        move_forward(5)
-    elif direction == turn_right:
-        move_right_approx_dist()
-    next_left_init = getLeftDistance()
-    next_invariant_init = getFrontDistance() + getBackDistance()
-    return next_left_init, next_invariant_init
-
-
-def move_forward(distance):
-    front1 = front2 = getFrontDistance()
-    back1 = back2 = getBackDistance()
-    while ((front1 - front2) + (back2 - back1)) / 2 < distance:
-        move_forward_small()
-        front2 = getFrontDistance()
-        back2 = getBackDistance()
-        if front2 < front_threshold:
-            print("too close!")
-            exit()
 
 
 def move_back_to_corner(time_amount, direction, approx_wall_dist):
@@ -402,53 +371,71 @@ def path_loop_2():
     global prev_wall
     global prev_back_distance
     left_init = getLeftDistance()
-    front_init = getFrontDistance()
-    back_dist = getBackDistance()
+    back_init = getBackDistance()
+    prev_corner_type = "concave"
     walls = []
 
     while True:
-        next_instruction, wall_length = wall_loop_2(left_init, front_init, back_dist)
-        walls.append(find_new_wall(wall_length))
+        next_instruction = wall_loop_2(left_init)
+        if prev_corner_type == "concave" and next_instruction == "Right":
+            front_end = getFrontDistance()
+            back_end = getBackDistance()
+            total_length = front_end + back_end
+            # Find new wall based on orientation
+            new_wall = find_new_wall(total_length)
+            # Change orientation
+            orientateRight()
+            # prev_corner type doesn't need to be changed
+
+        elif prev_corner_type == "concave" and next_instruction == "Left":
+            back_end = getBackDistance()
+            total_length = back_end
+            new_wall = find_new_wall(total_length)
+            orientateLeft()
+            prev_corner_type = "convex"
+
+        elif prev_corner_type == "convex" and next_instruction == "Right":
+            front_end = getFrontDistance()
+            back_end = getBackDistance()
+            total_length = front_end + back_end - back_init
+            new_wall = find_new_wall(total_length)
+            orientateRight()
+            prev_corner_type = "concave"
+
+        elif prev_corner_type == "convex" and next_instruction == "Left":
+            back_end = getBackDistance()
+            total_length = back_end - back_init
+            new_wall = find_new_wall(total_length)
+            orientateLeft()
+
+        walls.append(new_wall)
         to_next_wall_2(next_instruction)
+        # Reset wall measurements after moving to next wall
+        left_init = getLeftDistance()
+        back_init = getBackDistance()
 
 
-def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
-    global prev_wall
-    global prev_back_distance
-    global prev_corner
-    left_distances = [left_init_dist, 0]
-    front_distances = [0]
-    front_distance_travelled = 0
-    wall_length = wall_init_length
-
-    front_temp = front_init_dist
-    prev_back_distance = getBackDistance()
+def wall_loop_2(left_init_dist):
     while True:
         moveFORWARD(300, 500)
-        time.sleep(2)
+        time.sleep(1)
         new_left = getLeftDistance()
         new_front = getFrontDistance()
-        front_change = front_temp - new_front
-        front_temp = new_front
-        front_distance_travelled += front_change
-        left_distances[1] = new_left
 
         # If a new wall is found, return the total length of the wall
         print("left_init_dist: {}, new_left: {}, new_front: {}".format(left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
-            prev_corner = 'convex'
-            wall_length = calculate_wall_length(wall_length, left_distances[0], left_distances[1], front_distance_travelled)
-            return turn_left, wall_length
+            return turn_left
 
         elif new_front <= front_threshold:
-            prev_corner = 'concave'
-            return turn_right, wall_length
+            return turn_right
 
-        # elif err_check_too_far(left_init_dist, new_left):
-        #     crash_into_wall("away")
+        elif err_check_too_far(left_init_dist, new_left):
+            crash_into_wall("away")
 
-        # elif err_check_too_close(left_init_dist, new_left):
-        #     crash_into_wall("towards")
+        elif err_check_too_close(left_init_dist, new_left):
+            crash_into_wall("towards")
+
 
 def to_next_wall_2(instruction):
     if instruction == 'Left':
@@ -471,26 +458,6 @@ def check_new_wall(left_init, left_current):
     # Check if the current reading is a new wall, and repeats to be sure
     return left_current - left_init >= left_corner_threshold and getLeftDistance() - left_init >= left_corner_threshold
 
-
-# Calculates length of wall, allowing for the robot to have moved away somewhat.
-def calculate_wall_length(prev_length, left_init, left_current, front_travelled):
-    global prev_corner
-    x_diff = abs(left_init - left_current)
-    length_1 = math.sqrt(x_diff*x_diff + front_travelled*front_travelled)
-    if left_init <= left_current:
-        theta = math.atan(x_diff/front_travelled)
-        length_2 = math.sin(theta)*left_init
-
-    else:
-        if x_diff != 0:
-            theta = math.atan(front_travelled/x_diff)
-            length_2 = math.cos(theta)*left_current
-        else:
-            length_2 = 0
-    if prev_corner == 'concave':
-        return prev_length + length_1 + length_2
-    else:
-        return length_1 + length_2 - prev_length
 
 
 def is_close(num_1, num_2, threshold):

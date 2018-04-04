@@ -22,10 +22,10 @@ ult4 = ev3.UltrasonicSensor('in4')  # Left-sensor
 
 
 
-channel = 1
-serverAddress = '28:C2:DD:44:20:C8'
-s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-s.connect((serverAddress, channel))
+# channel = 1
+# serverAddress = '28:C2:DD:44:20:C8'
+# s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+# s.connect((serverAddress, channel))
 
 
 
@@ -261,21 +261,21 @@ def move_forward_to_corner(time_amount, direction, approx_wall_dist):
 
     if direction == "forward":
         while True:
-            moveFORWARD(150, time_amount)
+            moveFORWARD(200, time_amount)
             time.sleep(time_amount / 1000)
             left_dist = getLeftDistance()
             if not is_close(left_dist, approx_wall_dist, 10):
                 break
-        move_forward_to_corner(time_amount / 2, "backward", approx_wall_dist)
+        
 
-    elif direction == "backward":
+    elif direction == "backwards":
         while True:
             moveBACKWARD(150, time_amount)
             time.sleep(time_amount / 1000)
             left_dist = getLeftDistance()
             if is_close(left_dist, approx_wall_dist, 10):
                 break
-        move_back_to_corner(time_amount / 2, "forward", approx_wall_dist)
+        
 
 
 def turn_left_convex():
@@ -424,10 +424,11 @@ def path_loop_2():
     left_init = getLeftDistance()
     back_init = getBackDistance()
     prev_corner_type = "concave"
-    current_location = Point(0, 0)
+    current_location = Point(left_init, back_init)
     walls = []
     # should start each loop pressed against the wall
     while True:
+        # toSend("self_location", current_location.x, current_location.y)
         move_right_approx_dist(8)
         next_instruction = wall_loop_2(left_init)
         if prev_corner_type == "concave" and next_instruction == "Right":
@@ -468,6 +469,9 @@ def path_loop_2():
             orientateLeft()
 
         walls.append(new_wall)
+        # toSend("self_location", current_location.x, current_location.y)
+        # toSend("point", new_wall.startPoint.x, new_wall.startPoint.y)
+        # toSend("point", new_wall.endPoint.x, new_wall.endPoint.y)
         to_next_wall_2(next_instruction)
         # Reset wall measurements after moving to next wall
         left_init = getLeftDistance()
@@ -511,9 +515,11 @@ def wall_loop_2(left_init_dist):
 def to_next_wall_2(instruction):
     if instruction == 'Left':
         print("turn left")
+        # toSend("new_orientation", "Left")
         turn_left_convex()
     else:
         print("turn right")
+        # toSend("new_orientation", "Left")
         turn_right_concave()
 
 
@@ -602,8 +608,30 @@ def path_loop_demo():
         # Reset wall measurements after moving to next wall
         back_init = getBackDistance()
 
+def left_turn_demo():
+    left_init = getLeftDistance()
+    while True:
+        moveFORWARD(300, 1000)
+        time.sleep(1)
+        new_left = getLeftDistance()
+        new_front = getFrontDistance()
+
+        # If a new wall is found, return the total length of the wall
+        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
+            left_init, new_left, new_front))
+        if check_new_wall(left_init, new_left):
+            input("New wall detected. Press any key to continue")
+            break
+
+    move_forward_to_corner(150, "backwards", left_init)
+    input("Moved back to wall. Press any key to continue")
+    moveLEFT(200, 1000)
+    # crash_into_wall("towards")
+    input("Try to turn around the corner. Press any key to continue")
+    turn_left_convex()
+
 
 if __name__ == "__main__":
     print("Starting")
     # path_loop_demo()
-    path_loop_2()
+    left_turn_demo()

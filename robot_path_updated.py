@@ -294,14 +294,13 @@ def crash_into_wall(direction):
             if direction == "towards":
                 rotate_right_small()
                 time.sleep(0.5)
-            elif direction == "away":
+            else:  # direction == "away":
                 rotate_left_small()
                 time.sleep(0.5)
-            else:
-                break
             moveLEFT(100, 500)
             time.sleep(0.5)
         elif num_distance_errors > 10:
+            print("Large number of errors seen!")
             # Move back a little if there are a lot of erroneous readings
             moveRIGHT(100, 500)
             time.sleep(0.5)
@@ -411,7 +410,7 @@ def path_loop_2():
     walls = []
     # should start each loop pressed against the wall
     while True:
-        move_right_approx_dist(2)
+        move_right_approx_dist(8)
         next_instruction = wall_loop_2(left_init)
         if prev_corner_type == "concave" and next_instruction == "Right":
             front_end = getFrontDistance()
@@ -459,7 +458,7 @@ def path_loop_2():
 
 def wall_loop_2(left_init_dist):
     while True:
-        moveFORWARD(300, 500)
+        moveFORWARD(300, 1000)
         time.sleep(1)
         new_left = getLeftDistance()
         new_front = getFrontDistance()
@@ -477,9 +476,11 @@ def wall_loop_2(left_init_dist):
 
         elif err_check_too_far(left_init_dist, new_left):
             crash_into_wall("away")
+            move_right_approx_dist(8)
 
         elif err_check_too_close(left_init_dist, new_left):
             crash_into_wall("towards")
+            move_right_approx_dist(8)
 
 
 def to_next_wall_2(instruction):

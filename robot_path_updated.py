@@ -234,9 +234,10 @@ def same_location(location1, location2):
 
 
 def move_to_corner(time_amount, direction, approx_wall_dist):
-    if direction == "forward":
+    if direction == "forwards":
         while True:
             moveBACKWARD(150, time_amount)
+            time.sleep(time_amount/1000)
             left_dist = getLeftDistance()
             if is_close(left_dist, approx_wall_dist, 10):
                 break
@@ -244,6 +245,7 @@ def move_to_corner(time_amount, direction, approx_wall_dist):
     else:
         while True:
             moveBACKWARD(150, time_amount)
+            time.sleep(time_amount/1000)
             left_dist = getLeftDistance()
             if not is_close(left_dist, approx_wall_dist, 10):
                 moveFORWARD(100, 100)
@@ -260,8 +262,8 @@ def turn_left_convex():
     # move_forward_approx_dist(25)
     # crash_into_wall("towards")
     # move_back_to_corner(800, "backwards", 12)
-    moveFORWARD(300, 2700)
-    moveLEFT(300, 2700)
+    moveFORWARD(300, 3000)
+    moveLEFT(300, 3000)
 
 
 def crash_into_wall(direction):
@@ -528,6 +530,7 @@ def left_turn_demo():
     # crash_into_wall("towards")
     input("Try to turn around the corner. Press any key to continue")
     turn_left_convex()
+    input("Turned around corner. Press any key to continue")
     new_left = getLeftDistance()
     move_to_corner(150, "backwards", new_left)
 

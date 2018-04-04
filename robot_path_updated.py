@@ -409,8 +409,9 @@ def path_loop_2():
     prev_corner_type = "concave"
     current_location = Point(0, 0)
     walls = []
-
+    # should start each loop pressed against the wall
     while True:
+        move_right_approx_dist(2)
         next_instruction = wall_loop_2(left_init)
         if prev_corner_type == "concave" and next_instruction == "Right":
             front_end = getFrontDistance()
@@ -467,6 +468,8 @@ def wall_loop_2(left_init_dist):
         print("left_init_dist: {}, new_left: {}, new_front: {}".format(
             left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
+            crash_into_wall("away")
+            move_forward_to_corner(800, "backwards", left_init_dist)
             return turn_left
 
         elif new_front <= front_threshold:

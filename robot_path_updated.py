@@ -237,16 +237,21 @@ def move_to_corner(time_amount, direction, approx_wall_dist):
     if direction == "forward":
         while True:
             moveBACKWARD(150, time_amount)
+            time.sleep(time_amount/1000)
             left_dist = getLeftDistance()
             if is_close(left_dist, approx_wall_dist, 10):
+                moveFORWARD(100, 100)
+                time.sleep(0.1)
                 break
 
     else:
         while True:
             moveBACKWARD(150, time_amount)
+            time.sleep(time_amount/1000)
             left_dist = getLeftDistance()
             if not is_close(left_dist, approx_wall_dist, 10):
                 moveFORWARD(100, 100)
+                time.sleep(0.1)
                 break
 
 
@@ -457,8 +462,9 @@ def wall_loop_2(left_init_dist):
         print("left_init_dist: {}, new_left: {}, new_front: {}".format(
             left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
-            crash_into_wall("away")
-            move_to_corner(800, "forwards", left_init_dist)
+            move_to_corner(150, "forwards", left_init_dist)
+            moveLEFT(200, 1000)
+            time.sleep(1)
             return turn_left
 
         elif new_front <= front_threshold:
@@ -480,6 +486,8 @@ def to_next_wall_2(instruction):
         print("turn left")
         # toSend("new_orientation", "Left")
         turn_left_convex()
+        new_left = getLeftDistance()
+        move_to_corner(150, "backwards", new_left)
     else:
         print("turn right")
         # toSend("new_orientation", "Right")

@@ -1,6 +1,6 @@
 import unittest
 import sys
-sys.path.append("..")
+sys.path.append("../Src/")
 from PointPlotter import *
 
 
@@ -34,7 +34,7 @@ class TestPointPlotterMethods(unittest.TestCase):
 
     def test_225_degrees(self):
         test_point = find_wall_point(self.test_wall_distances, self.test_position, 225)
-        self.assertEqual(test_point, [1.7071067811865475, 0.2928932188134524])
+        self.assertEqual(test_point, [1.7071067811865475, 0.29289321881345254])
 
     def test_270_degrees(self):
         test_point = find_wall_point(self.test_wall_distances, self.test_position, 270)
@@ -42,7 +42,7 @@ class TestPointPlotterMethods(unittest.TestCase):
 
     def test_315_degrees(self):
         test_point = find_wall_point(self.test_wall_distances, self.test_position, 315)
-        self.assertEqual(test_point, [0.2928932188134524, 0.2928932188134524])
+        self.assertEqual(test_point, [0.29289321881345254, 0.2928932188134524])
 
     def test_360_degrees(self):
         test_point = find_wall_point(self.test_wall_distances, self.test_position, 360)

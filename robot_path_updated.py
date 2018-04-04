@@ -451,7 +451,7 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
         #     crash_into_wall("towards")
 
 def to_next_wall_2(instruction):
-    if instruction == 'convex':
+    if instruction == 'Left':
         print("turn left")
         turn_left_convex()
     else:

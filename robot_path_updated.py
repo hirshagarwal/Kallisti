@@ -515,72 +515,28 @@ def is_very_different(num_1, num_2):
     return abs(num_1 - num_2) >= 10
 
 
-def path_loop_demo():
-    global prev_wall
-    global prev_back_distance
+def left_turn_demo():
     left_init = getLeftDistance()
-    back_init = getBackDistance()
-    prev_corner_type = "concave"
-    walls = []
-
     while True:
-        input_1 = input("Enter the next direction")
-        if input_1 == "l" or input_1 == "r":
-            next_instruction = input_1
-        else:
-            print("Not a valid input. Should be \"l\" or \"r\"")
-            continue
-        print("Current orientation: {}\nInitial back distance: {}\nPrevious corner type: {}\n".format(
-            orientations[0], back_init, prev_corner_type))
+        moveFORWARD(300, 1000)
+        time.sleep(1)
+        new_left = getLeftDistance()
+        new_front = getFrontDistance()
 
-        if prev_corner_type == "concave" and next_instruction == "r":
-            front_end = getFrontDistance()
-            back_end = getBackDistance()
-            total_length = front_end + back_end
-            print("Front end length = {}\nBack end length = {}\nTotal length = {}".format(
-                front_end, back_end, total_length))
-            # Find new wall based on orientation
-            new_wall = find_new_wall(total_length)
-            # Change orientation
-            orientateRight()
-            # prev_corner type doesn't need to be changed
+        # If a new wall is found, return the total length of the wall
+        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
+            left_init, new_left, new_front))
+        if check_new_wall(left_init, new_left):
+            input("New wall detected. Press any key to continue")
+            break
 
-        elif prev_corner_type == "concave" and next_instruction == "l":
-            back_end = getBackDistance()
-            total_length = back_end
-            print("Back end length = {}\nTotal length = {}".format(
-                back_end, total_length))
-            new_wall = find_new_wall(total_length)
-            orientateLeft()
-            prev_corner_type = "convex"
-
-        elif prev_corner_type == "convex" and next_instruction == "r":
-            front_end = getFrontDistance()
-            back_end = getBackDistance()
-            total_length = front_end + back_end - back_init
-            print("Front end length = {}\nBack end length = {}\nTotal length = {}".format(front_end, back_end,
-                                                                                          total_length))
-            new_wall = find_new_wall(total_length)
-            orientateRight()
-            prev_corner_type = "concave"
-
-        elif prev_corner_type == "convex" and next_instruction == "Left":
-            back_end = getBackDistance()
-            total_length = back_end - back_init
-            print("Back end length = {}\nTotal length = {}".format(
-                back_end, total_length))
-            new_wall = find_new_wall(total_length)
-            orientateLeft()
-        print("New orientation = {}".format(orientations[0]))
-        print("New wall start point: {}\nEnd point: {}".format(
-            new_wall.startPoint, new_wall.endPoint))
-        walls.append(new_wall)
-        input_continue = input("Press any key to continue")
-        # Reset wall measurements after moving to next wall
-        back_init = getBackDistance()
+    move_forward_to_corner(800, "backwards", left_init)
+    input("Moved back to wall. Press any key to continue")
+    crash_into_wall("towards")
+    input("Try to turn around the corner. Press any key to continue")
+    turn_left_convex()
 
 
 if __name__ == "__main__":
-    print("Starting")
-    # path_loop_demo()
-    path_loop_2()
+    print("Starting...")
+    left_turn_demo()

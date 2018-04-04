@@ -3,13 +3,13 @@ import sys
 sys.path.append("../Mapping Software")
 import Src.drawing_tcp_use
 
-hostAddress = '60:57:18:3f:76:bc' # Mac Address of Bluetooth Device
+hostAddress = 'a0:e6:f8:db:95:87' # Mac Address of Bluetooth Device
 # hostAddress = 'localhost'
 port = 1
 backlog = 1
 size = 1024
-# s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((hostAddress, port))
 s.listen(backlog)
 

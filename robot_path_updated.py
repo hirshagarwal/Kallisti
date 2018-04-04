@@ -477,10 +477,12 @@ def wall_loop_2(left_init_dist):
         elif err_check_too_far(left_init_dist, new_left):
             crash_into_wall("away")
             move_right_approx_dist(8)
+            time.sleep(1)
 
         elif err_check_too_close(left_init_dist, new_left):
             crash_into_wall("towards")
             move_right_approx_dist(8)
+            time.sleep(1)
 
 
 def to_next_wall_2(instruction):

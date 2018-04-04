@@ -52,7 +52,7 @@ wheel_circumference = 15
 
 
 # remember to initialise
-self_location = (14.5, 17.5) # (x, y)
+self_location = (14.5, 17.5)  # (x, y)
 
 start_point = Point(0, 0)
 end_point = start_point
@@ -95,8 +95,8 @@ def rotateRIGHT(speed, t):
 
 
 def move_left_approx_dist(distance=10):
-    num_rotations = distance/wheel_circumference
-    degrees = 360*num_rotations
+    num_rotations = distance / wheel_circumference
+    degrees = 360 * num_rotations
     rightMotor.run_to_rel_pos(position_sp=-degrees, speed_sp=500)
     leftMotor.run_to_rel_pos(position_sp=degrees, speed_sp=500)
 
@@ -127,7 +127,6 @@ def rotate_left_90_approx():
     rightMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
     backMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
     leftMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
-
 
 
 def orientateLeft():
@@ -165,7 +164,7 @@ def getLeftDistance():
 
 
 def getSingleDistanceHelper(sensor):
-    return sensor.distance_centimeters+6
+
     # distances = [sensor.distance_centimeters for _ in range(10)]
     # while True:
     #     # The deviation of Ultrasonic Sensor is within 1 cm. If the standard variance of
@@ -183,6 +182,14 @@ def getSingleDistanceHelper(sensor):
     #             return most_common_value
     #         else:
     #             return mean(distances)
+    if sensor == frontSensor or sensor == backSensor:
+        readings = []
+        for i in range(3):
+            readings.append(sensor.distance_centimeters + 6)
+            time.sleep(0.5)
+        return mean(readings)
+    else:
+        return sensor.distance_centimeters + 6
 
 
 def move_forward_small():
@@ -203,7 +210,7 @@ def rotate_right_small():
 
 # This method can only be called after wallLoop()
 def same_location(location1, location2):
-    if (location1[0]-location2[0])**2 + (location1[1]-location2[1])**2 < 5**2:
+    if (location1[0] - location2[0])**2 + (location1[1] - location2[1])**2 < 5**2:
         return True
     return False
 
@@ -237,7 +244,7 @@ def move_forward_to_corner(time_amount, direction, approx_wall_dist):
     if direction == "forward":
         while True:
             moveFORWARD(150, time_amount)
-            time.sleep(time_amount/1000)
+            time.sleep(time_amount / 1000)
             left_dist = getLeftDistance()
             if not is_close(left_dist, approx_wall_dist, 10):
                 break
@@ -246,7 +253,7 @@ def move_forward_to_corner(time_amount, direction, approx_wall_dist):
     elif direction == "backward":
         while True:
             moveBACKWARD(150, time_amount)
-            time.sleep(time_amount/1000)
+            time.sleep(time_amount / 1000)
             left_dist = getLeftDistance()
             if is_close(left_dist, approx_wall_dist, 10):
                 break
@@ -326,11 +333,7 @@ def turn_right_concave():
     time.sleep(2)
     moveBACKWARD(300, 500)
 
-
     # crash_into_wall("towards")
-
-
-
 
 
 def move_to_start_convex_corner(time_step):
@@ -346,20 +349,26 @@ def move_to_start_convex_corner(time_step):
 def find_new_wall(distance):
     global end_point
     temp_point = end_point
+    print("\nStart point = {}".format(temp_point))
     x = end_point.x
     y = end_point.y
     cur_orientation = current_orientation()
+    print("Orientation = {}".format(cur_orientation))
     if cur_orientation == "up":
         end_point = Point(x, y + distance)
+        print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
-    elif orientations == "down":
+    elif cur_orientation == "down":
         end_point = Point(x, y - distance)
+        print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
     elif cur_orientation == "left":
         end_point = Point(x - distance, y)
+        print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
     else:
         end_point = Point(x + distance, y)
+        print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
 
 
@@ -423,7 +432,8 @@ def wall_loop_2(left_init_dist):
         new_front = getFrontDistance()
 
         # If a new wall is found, return the total length of the wall
-        print("left_init_dist: {}, new_left: {}, new_front: {}".format(left_init_dist, new_left, new_front))
+        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
+            left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
             return turn_left
 
@@ -459,7 +469,6 @@ def check_new_wall(left_init, left_current):
     return left_current - left_init >= left_corner_threshold and getLeftDistance() - left_init >= left_corner_threshold
 
 
-
 def is_close(num_1, num_2, threshold):
     return abs(num_1 - num_2) <= threshold
 
@@ -478,33 +487,36 @@ def path_loop_demo():
 
     while True:
         input_1 = input("Enter the next direction")
-        if input_1 == "Left" or input_1 == "Right":
+        if input_1 == "l" or input_1 == "r":
             next_instruction = input_1
         else:
-            print("Not a valid input. Should be \"Left\" or \"Right\"")
+            print("Not a valid input. Should be \"l\" or \"r\"")
             continue
-        print("Current orientation: {}\nInitial back distance: {}\nPrevious corner type: {}\n".format(orientations[0], back_init, prev_corner_type))
+        print("Current orientation: {}\nInitial back distance: {}\nPrevious corner type: {}\n".format(
+            orientations[0], back_init, prev_corner_type))
 
-        if prev_corner_type == "concave" and next_instruction == "Right":
+        if prev_corner_type == "concave" and next_instruction == "r":
             front_end = getFrontDistance()
             back_end = getBackDistance()
             total_length = front_end + back_end
-            print("Front end length = {}\nBack end length = {}\nTotal length = {}".format(front_end, back_end, total_length))
+            print("Front end length = {}\nBack end length = {}\nTotal length = {}".format(
+                front_end, back_end, total_length))
             # Find new wall based on orientation
             new_wall = find_new_wall(total_length)
             # Change orientation
             orientateRight()
             # prev_corner type doesn't need to be changed
 
-        elif prev_corner_type == "concave" and next_instruction == "Left":
+        elif prev_corner_type == "concave" and next_instruction == "l":
             back_end = getBackDistance()
             total_length = back_end
-            print("Back end length = {}\nTotal length = {}".format(back_end, total_length))
+            print("Back end length = {}\nTotal length = {}".format(
+                back_end, total_length))
             new_wall = find_new_wall(total_length)
             orientateLeft()
             prev_corner_type = "convex"
 
-        elif prev_corner_type == "convex" and next_instruction == "Right":
+        elif prev_corner_type == "convex" and next_instruction == "r":
             front_end = getFrontDistance()
             back_end = getBackDistance()
             total_length = front_end + back_end - back_init
@@ -517,11 +529,13 @@ def path_loop_demo():
         elif prev_corner_type == "convex" and next_instruction == "Left":
             back_end = getBackDistance()
             total_length = back_end - back_init
-            print("Back end length = {}\nTotal length = {}".format(back_end, total_length))
+            print("Back end length = {}\nTotal length = {}".format(
+                back_end, total_length))
             new_wall = find_new_wall(total_length)
             orientateLeft()
         print("New orientation = {}".format(orientations[0]))
-        print("New wall start point: {}\nEnd point: {}".format(new_wall.startPoint, new_wall.endPoint))
+        print("New wall start point: {}\nEnd point: {}".format(
+            new_wall.startPoint, new_wall.endPoint))
         walls.append(new_wall)
         input_continue = input("Press any key to continue")
         # Reset wall measurements after moving to next wall
@@ -530,4 +544,5 @@ def path_loop_demo():
 
 if __name__ == "__main__":
     print("Starting")
-    path_loop_demo()
+    # path_loop_demo()
+    path_loop_2()

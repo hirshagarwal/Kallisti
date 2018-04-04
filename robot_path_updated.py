@@ -233,49 +233,21 @@ def same_location(location1, location2):
     return False
 
 
-def move_back_to_corner(time_amount, direction, approx_wall_dist):
-
-    if time_amount <= 25:
-        return
-
+def move_to_corner(time_amount, direction, approx_wall_dist):
     if direction == "forward":
         while True:
-            moveFORWARD(150, time_amount)
+            moveBACKWARD(150, time_amount)
             left_dist = getLeftDistance()
             if is_close(left_dist, approx_wall_dist, 10):
                 break
-        move_back_to_corner(time_amount / 2, "backward", approx_wall_dist)
 
     else:
         while True:
             moveBACKWARD(150, time_amount)
             left_dist = getLeftDistance()
             if not is_close(left_dist, approx_wall_dist, 10):
+                moveFORWARD(100, 100)
                 break
-        move_back_to_corner(time_amount / 2, "forward", approx_wall_dist)
-
-
-def move_forward_to_corner(time_amount, direction, approx_wall_dist):
-    if time_amount <= 25:
-        return
-
-    if direction == "forward":
-        while True:
-            moveFORWARD(200, time_amount)
-            time.sleep(time_amount / 1000)
-            left_dist = getLeftDistance()
-            if not is_close(left_dist, approx_wall_dist, 10):
-                break
-        
-
-    elif direction == "backwards":
-        while True:
-            moveBACKWARD(150, time_amount)
-            time.sleep(time_amount / 1000)
-            left_dist = getLeftDistance()
-            if is_close(left_dist, approx_wall_dist, 10):
-                break
-        
 
 
 def turn_left_convex():
@@ -352,15 +324,6 @@ def turn_right_concave():
 
     # crash_into_wall("towards")
 
-
-def move_to_start_convex_corner(time_step):
-    """
-    Makes the robot move to the start of a convex corner
-    :param: time_step - time to move forwards/back for
-    :return:
-    """
-    # If this is the first time the robot has moved, rotate to 90 degrees.
-    pass
 
 
 def find_new_wall(distance):
@@ -495,7 +458,7 @@ def wall_loop_2(left_init_dist):
             left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
             crash_into_wall("away")
-            move_forward_to_corner(800, "backwards", left_init_dist)
+            move_to_corner(800, "forwards", left_init_dist)
             return turn_left
 
         elif new_front <= front_threshold:
@@ -559,33 +522,16 @@ def left_turn_demo():
             input("New wall detected. Press any key to continue")
             break
 
-    move_forward_to_corner(800, "backwards", left_init)
-    input("Moved back to wall. Press any key to continue")
-    crash_into_wall("towards")
-    input("Try to turn around the corner. Press any key to continue")
-    turn_left_convex()
-
-def left_turn_demo():
-    left_init = getLeftDistance()
-    while True:
-        moveFORWARD(300, 1000)
-        time.sleep(1)
-        new_left = getLeftDistance()
-        new_front = getFrontDistance()
-
-        # If a new wall is found, return the total length of the wall
-        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
-            left_init, new_left, new_front))
-        if check_new_wall(left_init, new_left):
-            input("New wall detected. Press any key to continue")
-            break
-
-    move_forward_to_corner(150, "backwards", left_init)
+    move_to_corner(150, "forwards", left_init)
     input("Moved back to wall. Press any key to continue")
     moveLEFT(200, 1000)
     # crash_into_wall("towards")
     input("Try to turn around the corner. Press any key to continue")
     turn_left_convex()
+    new_left = getLeftDistance()
+    move_to_corner(150, "backwards", new_left)
+
+
 
 
 if __name__ == "__main__":

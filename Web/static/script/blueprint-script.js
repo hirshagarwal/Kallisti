@@ -333,9 +333,49 @@ $(document).ready(function() {
 
                         if(item.type == "orientation_update")
                         {
-                            if(item.new_orientation == "left")
+                            if(item.new_orientation == "Left")
                             {
-                                var temp = orientations.pop()
+                                var temp = orientations.pop();
+                                orientations.unshift(temp);
+                            }
+                            else if(item.new_orientation == "Right")
+                            {
+                                var temp = orientations.shift();
+                                orientations.push(temp);
+                            }
+                            break;
+                        } 
+                        else if (item.type == "length")
+                        {
+                            item.type ="self_location";
+                            var len = parseFloat(item.length)
+                            if(orientations[0] == "up")
+                            {
+                                item.push({
+                                    x:robot_x,
+                                    y:robot_y+len
+                                })
+                            }
+                            else if(orientations[0] == "left")
+                            {
+                                item.push({
+                                    x:robot_x-len,
+                                    y:robot_y
+                                })
+                            }
+                            else if(orientations[0] == "down")
+                            {
+                                item.push({
+                                    x:robot_x,
+                                    y:robot_y-len
+                                })
+                            }
+                            else if(orientations[0] == "right")
+                            {
+                                item.push({
+                                    x:robot_x+len,
+                                    y:robot_y
+                                })
                             }
                         }
 

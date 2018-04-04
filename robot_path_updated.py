@@ -519,7 +519,7 @@ def to_next_wall_2(instruction):
         turn_left_convex()
     else:
         print("turn right")
-        # toSend("new_orientation", "Left")
+        # toSend("new_orientation", "Right")
         turn_right_concave()
 
 

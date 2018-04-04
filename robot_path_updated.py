@@ -42,13 +42,13 @@ turn_right = "Right"
 turn_left = "Left"
 
 # Threshold for how close the robot needs to be from the front wall before it changes direction
-front_threshold = 20
+front_threshold = 22
 
 initial_time_step = 500
 
-left_corner_threshold = 10
+left_corner_threshold = 5
 
-wheel_circumference = 12
+wheel_circumference = 15
 
 
 # remember to initialise
@@ -61,8 +61,8 @@ orientations = ["up", "right", "down", "left"]
 
 
 def moveFORWARD(speed, t):
-    frontMotor.run_timed(speed_sp=2 * speed, time_sp=t)
-    backMotor.run_timed(speed_sp=-2 * speed, time_sp=t)
+    frontMotor.run_timed(speed_sp=speed, time_sp=t)
+    backMotor.run_timed(speed_sp=-speed, time_sp=t)
 
 
 def moveBACKWARD(speed, t):
@@ -165,24 +165,25 @@ def getLeftDistance():
 
 
 def getSingleDistanceHelper(sensor):
-    distances = [sensor.distance_centimeters for _ in range(10)]
-    while True:
-        # The deviation of Ultrasonic Sensor is within 1 cm. If the standard variance of
-        # a set of readings is greater than 1 (supposed to be 1), it must contains invalid data.
-        #TODO find a appropriate value for standard variance
-        if pvariance(distances) > 1:
-            # Always trust smaller readings and remove larger ones.
-            num_to_remove = max(distances)
-            distances = [i for i in distances if i != num_to_remove]
-        else:
-            data_map = Counter(distances)
-            most_common_value = max(set(distances), key=distances.count)
-            # If the occurance of the most common value is greater than 13, return most_common_value.
-            # Otherwise the mean of readings is more reliable.
-            if data_map[most_common_value] >= 6:
-                return most_common_value
-            else:
-                return mean(distances)
+    return sensor.distance_centimeters+6
+    # distances = [sensor.distance_centimeters for _ in range(10)]
+    # while True:
+    #     # The deviation of Ultrasonic Sensor is within 1 cm. If the standard variance of
+    #     # a set of readings is greater than 1 (supposed to be 1), it must contains invalid data.
+    #     #TODO find a appropriate value for standard variance
+    #     if pvariance(distances) > 1:
+    #         # Always trust smaller readings and remove larger ones.
+    #         num_to_remove = max(distances)
+    #         distances = [i for i in distances if i != num_to_remove]
+    #     else:
+    #         data_map = Counter(distances)
+    #         most_common_value = max(set(distances), key=distances.count)
+    #         # If the occurance of the most common value is greater than 13, return most_common_value.
+    #         # Otherwise the mean of readings is more reliable.
+    #         if data_map[most_common_value] >= 6:
+    #             return most_common_value
+    #         else:
+    #             return mean(distances)
 
 
 def get_distances():
@@ -284,15 +285,17 @@ def move_forward_to_corner(time_amount, direction, approx_wall_dist):
 
 
 def turn_left_convex():
-    move_right_approx_dist(10)
-    time.sleep(2)
-    move_forward_approx_dist(25)
-    time.sleep(2)
-    rotate_left_90_approx()
-    time.sleep(1)
-    move_forward_approx_dist(25)
-    crash_into_wall("towards")
-    move_back_to_corner(800, "backwards", 12)
+    # move_right_approx_dist(10)
+    # time.sleep(2)
+    # move_forward_approx_dist(25)
+    # time.sleep(2)
+    # rotate_left_90_approx()
+    # time.sleep(1)
+    # move_forward_approx_dist(25)
+    # crash_into_wall("towards")
+    # move_back_to_corner(800, "backwards", 12)
+    moveFORWARD(300, 2700)
+    moveLEFT(300, 2700)
 
 
 def crash_into_wall(direction):
@@ -343,11 +346,22 @@ def crash_into_wall(direction):
 
 
 def turn_right_concave():
-    move_right_approx_dist()
+    move_right_approx_dist(3)
     time.sleep(2)
     rotate_right_90_approx()
     time.sleep(2)
-    crash_into_wall("towards")
+    move_left_approx_dist(5)
+    time.sleep(2)
+    moveBACKWARD(300, 1000)
+    moveLEFT(300, 1000)
+    time.sleep(2)
+    moveBACKWARD(300, 500)
+
+
+    # crash_into_wall("towards")
+
+
+
 
 
 def move_to_start_convex_corner(time_step):
@@ -395,11 +409,13 @@ def path_loop_2():
     while True:
         next_instruction, wall_length = wall_loop_2(left_init, front_init, back_dist)
         walls.append(find_new_wall(wall_length))
+        to_next_wall_2(next_instruction)
 
 
 def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
     global prev_wall
     global prev_back_distance
+    global prev_corner
     left_distances = [left_init_dist, 0]
     front_distances = [0]
     front_distance_travelled = 0
@@ -408,7 +424,8 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
     front_temp = front_init_dist
     prev_back_distance = getBackDistance()
     while True:
-        moveFORWARD(100, 500)
+        moveFORWARD(300, 500)
+        time.sleep(2)
         new_left = getLeftDistance()
         new_front = getFrontDistance()
         front_change = front_temp - new_front
@@ -417,6 +434,7 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
         left_distances[1] = new_left
 
         # If a new wall is found, return the total length of the wall
+        print("left_init_dist: {}, new_left: {}, new_front: {}".format(left_init_dist, new_left, new_front))
         if check_new_wall(left_init_dist, new_left):
             prev_corner = 'convex'
             wall_length = calculate_wall_length(wall_length, left_distances[0], left_distances[1], front_distance_travelled)
@@ -426,11 +444,19 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
             prev_corner = 'concave'
             return turn_right, wall_length
 
-        elif err_check_too_far(left_init_dist, new_left):
-            crash_into_wall("away")
+        # elif err_check_too_far(left_init_dist, new_left):
+        #     crash_into_wall("away")
 
-        elif err_check_too_close(left_init_dist, new_left):
-            crash_into_wall("towards")
+        # elif err_check_too_close(left_init_dist, new_left):
+        #     crash_into_wall("towards")
+
+def to_next_wall_2(instruction):
+    if instruction == 'convex':
+        print("turn left")
+        turn_left_convex()
+    else:
+        print("turn right")
+        turn_right_concave()
 
 
 def err_check_too_close(left_init, left_current):
@@ -478,6 +504,7 @@ def is_very_different(num_1, num_2):
 
 
 if __name__ == "__main__":
-    turn_right_concave()
-
-
+    print("Starting")
+    while True:
+        a = int(input("enter a num"))
+        path_loop_2()

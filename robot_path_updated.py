@@ -20,8 +20,14 @@ ult2 = ev3.UltrasonicSensor('in2')  # Right-sensor
 ult3 = ev3.UltrasonicSensor('in3')  # Back-sensor
 ult4 = ev3.UltrasonicSensor('in4')  # Left-sensor
 
-# For button press:
-butt = ev3.Button()
+
+
+channel = 1
+serverAddress = '28:C2:DD:44:20:C8'
+s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+s.connect((serverAddress, channel))
+
+
 
 # Initialise motors and sensors to defaults - will change depending on orientation.
 
@@ -58,6 +64,18 @@ start_point = Point(0, 0)
 end_point = start_point
 
 orientations = ["up", "right", "down", "left"]
+
+
+
+def toSend(d, x, y=1):
+    global s
+    if d == "orientation_update":
+        jsonToSend = json.dumps({'type':d, "new_orientation": x})
+    elif d =="length":
+        jsonToSend = json.dumps({'type':d, "length": x})
+    else:
+        jsonToSend = json.dumps({'x': x, 'y': y, 'type': d})
+    s.send(jsonToSend.encode())
 
 
 def moveFORWARD(speed, t):
@@ -457,11 +475,16 @@ def path_loop_2():
 
 
 def wall_loop_2(left_init_dist):
+    prev_front_distance = getFrontDistance()
+    moved_distance = 0
     while True:
         moveFORWARD(300, 500)
         time.sleep(1)
         new_left = getLeftDistance()
         new_front = getFrontDistance()
+        moved_distance = new_front - prev_front_distance
+        prev_front_distance = new_front
+        # toSend("length", moved_distance)
 
         # If a new wall is found, return the total length of the wall
         print("left_init_dist: {}, new_left: {}, new_front: {}".format(

@@ -7,7 +7,8 @@ import math
 #from client import *
 
 # Test the new branch
-
+prev_wall = 'concave'
+prev_back_distance = 0
 m1=ev3.LargeMotor('outA')   # front
 m2=ev3.LargeMotor('outB')   # right
 m3=ev3.LargeMotor('outC')   # back
@@ -401,24 +402,28 @@ def current_orientation():
 
 
 def path_loop_2():
+    global prev_wall
+    global prev_back_distance
     left_init = getLeftDistance()
     front_init = getFrontDistance()
     back_dist = getBackDistance()
     walls = []
 
     while True:
-        next_instruction, wall_length = wall_loop_2()
+        next_instruction, wall_length = wall_loop_2(left_init, front_init, back_dist)
         walls.append(find_new_wall(wall_length))
 
 
 def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
+    global prev_wall
+    global prev_back_distance
     left_distances = [left_init_dist, 0]
     front_distances = [0]
     front_distance_travelled = 0
     wall_length = wall_init_length
 
     front_temp = front_init_dist
-
+    prev_back_distance = getBackDistance()
     while True:
         moveFORWARD(100, 500)
         new_left = getLeftDistance()
@@ -430,10 +435,12 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
 
         # If a new wall is found, return the total length of the wall
         if check_new_wall(left_init_dist, new_left):
-            wall_length = calculate_wall_length(wall_length)
+            prev_corner = 'convex'
+            wall_length = calculate_wall_length(wall_length, left_distances[0], left_distances[1], front_distance_travelled)
             return turn_left, wall_length
 
         elif new_front <= front_threshold:
+            prev_corner = 'concave'
             return turn_right, wall_length
 
         elif err_check_too_far(left_init_dist, new_left):
@@ -470,8 +477,10 @@ def calculate_wall_length(prev_length, left_init, left_current, front_travelled)
             length_2 = math.cos(theta)*left_current
         else:
             length_2 = 0
-
-    return prev_length + length_1 + length_2
+    if prev_corner = 'concave':
+        return prev_length + length_1 + length_2
+    else:
+        return length_1 + length_2 - prev_length
 
 
 def correct_error_far(left_init, left_current, front_travelled, prev_wall_length):

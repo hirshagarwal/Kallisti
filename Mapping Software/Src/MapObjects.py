@@ -80,7 +80,14 @@ class Wall:
                 index = i
         self.endPoint = intersections[index]
         return intersections[i]
-
+    def length(self);
+        x1 = self.startPoint.x
+        x2 = self.endPoint.x
+        y1 = self.startPoint.x
+        y2 = self.startPoitn.y
+        z1 = (x1 - x2)*(x1 - x2)
+        z2 = (y1 - y2)*(y1 -y2)
+        return math.sqrt(z1 + z2)
 
 
 class Point:

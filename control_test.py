@@ -43,8 +43,8 @@ def moveLEFT(speed, time):
 def rotateLEFT(speed, time):
     m1.run_timed(speed_sp = speed, time_sp = time)
     m2.run_timed(speed_sp = speed, time_sp = time)
-    m3.run_timed(speed_sp = speed, time_sp = time)
-    m4.run_timed(speed_sp = speed, time_sp = time)
+    m3.run_timed(speed_sp = -speed, time_sp = time)
+    m4.run_timed(speed_sp = -speed, time_sp = time)
 
 def rotateRIGHT(speed, time):
     m1.run_timed(speed_sp = -speed, time_sp = time)

@@ -4,21 +4,21 @@ from collections import Counter
 from MapObjects import Wall, Point
 import time
 import math
-#from client import *
+# from client import *
 
 # Test the new branch
 prev_wall = 'concave'
 prev_back_distance = 0
-m1=ev3.LargeMotor('outA')   # front
-m2=ev3.LargeMotor('outB')   # right
-m3=ev3.LargeMotor('outC')   # back
-m4=ev3.LargeMotor('outD')   # left
+m1 = ev3.LargeMotor('outA')   # front
+m2 = ev3.LargeMotor('outB')   # right
+m3 = ev3.LargeMotor('outC')   # back
+m4 = ev3.LargeMotor('outD')   # left
 
 
-ult1=ev3.UltrasonicSensor('in1') #Front-sensor
-ult2=ev3.UltrasonicSensor('in2') #Right-sensor
-ult3=ev3.UltrasonicSensor('in3') #Back-sensor
-ult4=ev3.UltrasonicSensor('in4') #Left-sensor
+ult1 = ev3.UltrasonicSensor('in1')  # Front-sensor
+ult2 = ev3.UltrasonicSensor('in2')  # Right-sensor
+ult3 = ev3.UltrasonicSensor('in3')  # Back-sensor
+ult4 = ev3.UltrasonicSensor('in4')  # Left-sensor
 
 # For button press:
 butt = ev3.Button()
@@ -42,25 +42,17 @@ turn_right = "Right"
 turn_left = "Left"
 
 # Threshold for how close the robot needs to be from the front wall before it changes direction
-# TODO test threshold and find appropriate value - chosen arbitrarily currently
-front_threshold = 18.5
+front_threshold = 20
 
-# TODO test initial_time_step and find appropriate value
-initial_time_step = 100
+initial_time_step = 500
 
 left_corner_threshold = 10
 
-# String values for different orientations - easier to pass as arguments
-orient_front = "Front" # 0
-orient_right = "Right" # 1
-orient_back = "Back" # 2
-orient_left = "Left" # 3
+wheel_circumference = 12
 
 
 # remember to initialise
 self_location = (14.5, 17.5) # (x, y)
-orientation = 0
-
 
 start_point = Point(0, 0)
 end_point = start_point
@@ -69,103 +61,83 @@ orientations = ["up", "right", "down", "left"]
 
 
 def moveFORWARD(speed, t):
-    frontMotor.run_timed(speed_sp = 2 * speed, time_sp = t)
-    backMotor.run_timed(speed_sp = -2 * speed, time_sp = t)
+    frontMotor.run_timed(speed_sp=2 * speed, time_sp=t)
+    backMotor.run_timed(speed_sp=-2 * speed, time_sp=t)
 
 
-def moveBACKWARD(speed, time):
-    moveFORWARD(-speed, time)
+def moveBACKWARD(speed, t):
+    moveFORWARD(-speed, t)
 
 
 # Don't call the following two functions, they won't update robot's self location.
-def moveRIGHT(speed, time):
-    rightMotor.run_timed(speed_sp = speed, time_sp = time)
-    leftMotor.run_timed(speed_sp = -speed, time_sp = time)
+def moveRIGHT(speed, t):
+    rightMotor.run_timed(speed_sp=speed, time_sp=t)
+    leftMotor.run_timed(speed_sp=-speed, time_sp=t)
 
 
-def moveLEFT(speed, time):
-    rightMotor.run_timed(speed_sp = -speed, time_sp = time)
-    leftMotor.run_timed(speed_sp = speed, time_sp = time)
+def moveLEFT(speed, t):
+    rightMotor.run_timed(speed_sp=-speed, time_sp=t)
+    leftMotor.run_timed(speed_sp=speed, time_sp=t)
 
 
-def rotateLEFT(speed, time):
-    frontMotor.run_timed(speed_sp = speed, time_sp = time)
-    rightMotor.run_timed(speed_sp = speed, time_sp = time)
-    backMotor.run_timed(speed_sp = speed, time_sp = time)
-    leftMotor.run_timed(speed_sp = speed, time_sp = time)
+def rotateLEFT(speed, t):
+    frontMotor.run_timed(speed_sp=speed, time_sp=t)
+    rightMotor.run_timed(speed_sp=speed, time_sp=t)
+    backMotor.run_timed(speed_sp=speed, time_sp=t)
+    leftMotor.run_timed(speed_sp=speed, time_sp=t)
 
 
-def rotateRIGHT(speed, time):
-    frontMotor.run_timed(speed_sp = -speed, time_sp = time)
-    rightMotor.run_timed(speed_sp = -speed, time_sp = time)
-    backMotor.run_timed(speed_sp = -speed, time_sp = time)
-    leftMotor.run_timed(speed_sp = -speed, time_sp = time)
+def rotateRIGHT(speed, t):
+    frontMotor.run_timed(speed_sp=-speed, time_sp=t)
+    rightMotor.run_timed(speed_sp=-speed, time_sp=t)
+    backMotor.run_timed(speed_sp=-speed, time_sp=t)
+    leftMotor.run_timed(speed_sp=-speed, time_sp=t)
+
+
+def move_left_approx_dist(distance=10):
+    num_rotations = distance/wheel_circumference
+    degrees = 360*num_rotations
+    rightMotor.run_to_rel_pos(position_sp=-degrees, speed_sp=500)
+    leftMotor.run_to_rel_pos(position_sp=degrees, speed_sp=500)
+
+
+def move_right_approx_dist(distance=10):
+    num_rotations = distance / wheel_circumference
+    degrees = 360 * num_rotations
+    rightMotor.run_to_rel_pos(position_sp=degrees, speed_sp=500)
+    leftMotor.run_to_rel_pos(position_sp=-degrees, speed_sp=500)
+
+
+def move_forward_approx_dist(distance=10):
+    num_rotations = distance / wheel_circumference
+    degrees = 360 * num_rotations
+    backMotor.run_to_rel_pos(position_sp=degrees, speed_sp=500)
+    frontMotor.run_to_rel_pos(position_sp=-degrees, speed_sp=500)
+
+
+def rotate_right_90_approx():
+    frontMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
+    rightMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
+    backMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
+    leftMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
+
+
+def rotate_left_90_approx():
+    frontMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
+    rightMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
+    backMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
+    leftMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
+
 
 
 def orientateLeft():
-    print("left")
-    global orientation
-    global frontMotor
-    global rightMotor
-    global leftMotor
-    global backMotor
-    global frontSensor
-    global rightSensor
-    global leftSensor
-    global backSensor
-    orientation = (orientation - 1 + 4) % 4
-
-    temp_motor = m.pop()
-    m.insert(0, temp_motor)
-    frontMotor = m[0]
-    rightMotor = m[1]
-    backMotor = m[2]
-    leftMotor = m[3]
-
-    temp_sensor = ult.pop()
-    ult.insert(0, temp_sensor)
-    frontSensor = ult[0]
-    rightSensor = ult[1]
-    backSensor = ult[2]
-    leftSensor = ult[3]
-
+    global orientations
     temp_orient = orientations.pop()
     orientations.insert(0, temp_orient)
 
 
-def orientateForwards():
-    pass
-
-
 def orientateRight():
-    print("right")
-    global orientation
-    global orientation
-    global frontMotor
-    global rightMotor
-    global leftMotor
-    global backMotor
-    global frontSensor
-    global rightSensor
-    global leftSensor
-    global backSensor
-
-    orientation= (orientation + 1 + 4) % 4
-
-    temp_motor = m.pop(0)
-    m.append(temp_motor)
-    frontMotor = m[0]
-    rightMotor = m[1]
-    backMotor = m[2]
-    leftMotor = m[3]
-
-    temp_sensor = ult.pop(0)
-    ult.append(temp_sensor)
-    frontSensor = ult[0]
-    rightSensor = ult[1]
-    backSensor = ult[2]
-    leftSensor = ult[3]
-
+    global orientations
     temp_orient = orientations.pop(0)
     orientations.append(temp_orient)
 
@@ -173,7 +145,6 @@ def orientateRight():
 def orientateBackwards():
     orientateLeft()
     orientateLeft()
-
 
 
 def getFrontDistance():
@@ -214,23 +185,23 @@ def getSingleDistanceHelper(sensor):
                 return mean(distances)
 
 
-def getDistances():
+def get_distances():
     return [getFrontDistance(), getRightDistance(), getBackDistance(), getLeftDistance()]
 
 
-def moveForwardSmall():
+def move_forward_small():
     moveFORWARD(100, 500)
 
 
-def moveBackSmall():
+def move_back_small():
     moveBACKWARD(100, 500)
 
 
-def rotateLeftSmall():
+def rotate_left_small():
     rotateLEFT(100, 500)
 
 
-def rotateRightSmall():
+def rotate_right_small():
     rotateRIGHT(100, 500)
 
 
@@ -241,99 +212,30 @@ def same_location(location1, location2):
     return False
 
 
-def toNextWall(direction, distance_to_prev_wall):
+def toNextWall(direction):
     half_width_of_robot = 15
     ideal_distance_to_wall = 11
     if direction == turn_left:
-        moveForward(half_width_of_robot + ideal_distance_to_wall)
+        move_forward(half_width_of_robot + ideal_distance_to_wall)
         orientateLeft()
-        moveForward(distance_to_prev_wall + 5)
+        move_forward(5)
     elif direction == turn_right:
-        orientateRight()
+        move_right_approx_dist()
     next_left_init = getLeftDistance()
     next_invariant_init = getFrontDistance() + getBackDistance()
     return next_left_init, next_invariant_init
 
 
-def moveForward(distance):
+def move_forward(distance):
     front1 = front2 = getFrontDistance()
     back1 = back2 = getBackDistance()
     while ((front1 - front2) + (back2 - back1)) / 2 < distance:
-        moveForwardSmall()
+        move_forward_small()
         front2 = getFrontDistance()
         back2 = getBackDistance()
         if front2 < front_threshold:
             print("too close!")
             exit()
-
-
-def find_90_rotate(power_rotation, time_rotation, direction, kind):
-    """
-    Test function to get the robot to rotate in place so that it finds a minimum
-    Assuming robot is moving away
-    """
-    print("rotating {} with power: {} and time: {}".format(direction, power_rotation, time_rotation))
-    min_left= getLeftDistance()
-
-
-    if kind == "power":
-        if power_rotation <= 100:
-            # Stop recursing and finish
-            return
-    else:
-        if time_rotation < 100:
-            if direction == "left":
-                rotateLEFT(power_rotation, time_rotation*2)
-            else:
-                rotateRIGHT(power_rotation, time_rotation*2)
-            return
-
-    while True:
-        if direction == "left":
-            rotateLEFT(power_rotation, time_rotation)
-        else:
-            rotateRIGHT(power_rotation, time_rotation)
-        new_left = getLeftDistance()
-        print("new left = {}".format(new_left))
-        # If the value is greater the robot must have rotated past the minimum
-        if new_left < min_left:
-            check_left = getLeftDistance()
-            if check_left < min_left:
-                min_left = (new_left + check_left) / 2
-        else:
-            break
-
-    if direction == "left":
-        if kind == "power":
-            find_90_rotate(power_rotation / 2, time_rotation, "right", "power")
-        else:
-            find_90_rotate(power_rotation, time_rotation / 2, "right", "time")
-    else:
-        if kind == "power":
-            find_90_rotate(power_rotation / 2, time_rotation, "left", "power")
-        else:
-            find_90_rotate(power_rotation, time_rotation / 2, "left", "time")
-
-
-
-def should_rotate_left():
-    """
-    Finds if the robot needs to rotate left or right to obtain the minimum distance
-    :return:
-    """
-    dist_2 = getLeftDistance()
-    rotateLeftSmall()
-    dist_1 = getLeftDistance()
-    rotateRightSmall()
-    rotateRightSmall()
-    dist_3 = getLeftDistance()
-
-    # If the min distance was the rightmost one, need to go further right to find min
-    if dist_3 <= dist_2 and dist_3 <= dist_1:
-        return False
-    # If the min distance was in the middle, or on the left, then you need to rotate left
-    else:
-        return True
 
 
 def move_back_to_corner(time_amount, direction, approx_wall_dist):
@@ -358,7 +260,94 @@ def move_back_to_corner(time_amount, direction, approx_wall_dist):
         move_back_to_corner(time_amount / 2, "forward", approx_wall_dist)
 
 
+def move_forward_to_corner(time_amount, direction, approx_wall_dist):
+    if time_amount <= 25:
+        return
 
+    if direction == "forward":
+        while True:
+            moveFORWARD(150, time_amount)
+            time.sleep(time_amount/1000)
+            left_dist = getLeftDistance()
+            if not is_close(left_dist, approx_wall_dist, 10):
+                break
+        move_forward_to_corner(time_amount / 2, "backward", approx_wall_dist)
+
+    elif direction == "backward":
+        while True:
+            moveBACKWARD(150, time_amount)
+            time.sleep(time_amount/1000)
+            left_dist = getLeftDistance()
+            if is_close(left_dist, approx_wall_dist, 10):
+                break
+        move_back_to_corner(time_amount / 2, "forward", approx_wall_dist)
+
+
+def turn_left_convex():
+    move_right_approx_dist(10)
+    time.sleep(2)
+    move_forward_approx_dist(25)
+    time.sleep(2)
+    rotate_left_90_approx()
+    time.sleep(1)
+    move_forward_approx_dist(25)
+    crash_into_wall("towards")
+    move_back_to_corner(800, "backwards", 12)
+
+
+def crash_into_wall(direction):
+    """
+    Lets the robot gracefully crash into a wall
+    :param direction: has values towards or away depending on if the robot is moving towards or away from the wall
+    :return:
+    """
+    distances = [999]
+    num_distance_errors = 0
+    while True:
+        dist_left = getLeftDistance()
+        print("dist_left = {}".format(dist_left))
+        distances.append(dist_left)
+        print("prev_dist = {}\n".format(distances[-2]))
+        if distances[-2] > dist_left > 12.1:
+            moveLEFT(200, 1000)
+            time.sleep(1)
+        elif distances[-2] == dist_left and dist_left > 12.2:
+            if direction == "towards":
+                rotate_right_small()
+                time.sleep(0.5)
+            elif direction == "away":
+                rotate_left_small()
+                time.sleep(0.5)
+            else:
+                break
+            moveLEFT(100, 500)
+            time.sleep(0.5)
+        elif num_distance_errors > 10:
+            # Move back a little if there are a lot of erroneous readings
+            moveRIGHT(100, 500)
+            time.sleep(0.5)
+            rotate_left_small()
+            time.sleep(0.5)
+            num_distance_errors = 0
+        elif dist_left <= 12 or dist_left >= 255:
+            # Ignore readings less than 12 or 255 as they are wrong
+            distances.pop()
+            num_distance_errors += 1
+            continue
+        else:
+            check_left = getLeftDistance()
+            if check_left <= 12.1:
+                moveLEFT(100, 2000)
+                time.sleep(2)
+                break
+
+
+def turn_right_concave():
+    move_right_approx_dist()
+    time.sleep(2)
+    rotate_right_90_approx()
+    time.sleep(2)
+    crash_into_wall("towards")
 
 
 def move_to_start_convex_corner(time_step):
@@ -368,13 +357,7 @@ def move_to_start_convex_corner(time_step):
     :return:
     """
     # If this is the first time the robot has moved, rotate to 90 degrees.
-    if time_step == initial_time_step:
-        if should_rotate_left():
-            find_90_rotate(time_step, "left")
-        else:
-            find_90_rotate(time_step, "right")
-
-
+    pass
 
 
 def find_new_wall(distance):
@@ -444,10 +427,10 @@ def wall_loop_2(left_init_dist, front_init_dist, wall_init_length):
             return turn_right, wall_length
 
         elif err_check_too_far(left_init_dist, new_left):
-            correct_error_far(left_init_dist, new_left, front_distance_travelled)
+            crash_into_wall("away")
 
         elif err_check_too_close(left_init_dist, new_left):
-            correct_error_near(left_init_dist, new_left, front_distance_travelled)
+            crash_into_wall("towards")
 
 
 def err_check_too_close(left_init, left_current):
@@ -465,6 +448,7 @@ def check_new_wall(left_init, left_current):
 
 # Calculates length of wall, allowing for the robot to have moved away somewhat.
 def calculate_wall_length(prev_length, left_init, left_current, front_travelled):
+    global prev_corner
     x_diff = abs(left_init - left_current)
     length_1 = math.sqrt(x_diff*x_diff + front_travelled*front_travelled)
     if left_init <= left_current:
@@ -477,37 +461,10 @@ def calculate_wall_length(prev_length, left_init, left_current, front_travelled)
             length_2 = math.cos(theta)*left_current
         else:
             length_2 = 0
-    if prev_corner = 'concave':
+    if prev_corner == 'concave':
         return prev_length + length_1 + length_2
     else:
         return length_1 + length_2 - prev_length
-
-
-def correct_error_far(left_init, left_current, front_travelled, prev_wall_length):
-    x_diff = left_current - left_init
-    theta = math.atan(front_travelled/x_diff)
-    expected_left = math.sin(theta)*left_current
-    rotate_left_to_distance(expected_left, left_init, initial_time_step)
-
-    wall_removed = math.cos(theta)*left_current
-    new_wall_length = prev_wall_length - wall_removed
-
-
-def rotate_left_to_distance(dist_target, dist_init, time):
-    prev_left = dist_init
-    while True:
-        rotateLeftSmall()
-        new_left = getLeftDistance()
-        if is_close(dist_target, new_left, 2):
-            break
-        else:
-            #TODO finish
-            continue
-
-
-def correct_error_near(left_init, left_current, front_travelled, prev_wall_length):
-    #TODO finish
-    pass
 
 
 def is_close(num_1, num_2, threshold):
@@ -518,7 +475,9 @@ def is_very_different(num_1, num_2):
     return abs(num_1 - num_2) >= 10
 
 
+
+
 if __name__ == "__main__":
-    orientateLeft()
-    init_left = getLeftDistance()
-    move_back_to_corner(400, "backward", init_left)
+    turn_right_concave()
+
+

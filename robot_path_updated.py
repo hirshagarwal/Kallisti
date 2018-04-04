@@ -532,8 +532,6 @@ def left_turn_demo():
     move_to_corner(150, "backwards", new_left)
 
 
-
-
 if __name__ == "__main__":
     print("Starting")
     # path_loop_demo()

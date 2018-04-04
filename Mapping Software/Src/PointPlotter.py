@@ -66,10 +66,6 @@ class Wall90:
         return self.c
 
 
-
-
-
-
 def get_second_point(point, angle):
     # Convert starting angle from radians to degrees
     angle_rad = math.radians(angle)
@@ -330,13 +326,13 @@ def convert_points_to_matrix(points):
 
     return matrix
 
+
 def convert_params_to_wall_start(a, b, c):
     """
     Converts the parameters for the second wall to a wall since the first wall is always given by x = 0
     :param a, b, c: Values of the equation Ax + By = C for the second wall:
     :return:
     """
-
 
 
 def main():

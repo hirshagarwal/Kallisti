@@ -24,17 +24,53 @@ $(document).ready(function() {
     //ctx.translate(250, 250);
     ctx.moveTo(canvasWidth/2, canvasHeight/2);
 
+    var draw_map = canvas.getContext("2d");
+    draw_map.moveTo(canvasWidth/2, canvasHeight/2);
+
+    var robot_pos = canvas.getContext("2d");
+    robot_pos.moveTo(canvasWidth/2, canvasHeight/2);
+
     var origin = canvas.getContext("2d");
     origin.fillStyle = "#FF0000";
-    
+
     var squareSize = 7.5;
     origin.fillRect(canvasWidth/2 - squareSize/2 ,canvasHeight/2 - squareSize/2 , squareSize, squareSize);
+
+    var robot_x = 0;
+    var robot_y = 0;
+
+    var point_x = 0;
+    var point_y = 0;
+
+    var grid = canvas.getContext("2d");
+
+    var p = 0;
+    function drawBoard(){
+    grid.beginPath();
+    grid.strokeStyle = "lightgray";
+    for (var x = 0; x <= canvasWidth; x += 50) {
+        grid.moveTo(0.5 + x + p, p);
+        grid.lineTo(0.5 + x + p, canvasHeight + p);
+    }
+
+    for (var x = 0; x <= canvasHeight; x += 50) {
+        grid.moveTo(p, 0.5 + x + p);
+        grid.lineTo(canvasWidth + p, 0.5 + x + p);
+    }
+    grid.stroke();
+    }
+
+    var move_posX = canvasWidth/2;
+    var move_posY = canvasHeight/2;
+
+    drawBoard();
 
 
     $("#plus-icon").on('click', function(event) {
         if (input_flag == 0) {
             input_flag = 1;
-            $("#upload-button").removeClass('primary');
+            $("#draw-button").removeClass('primary');
+            $("#draw-button").attr('disabled', 'true');
             $("#finish-button").addClass('primary');
             $("#finish-button").html("Finish");
         }
@@ -49,7 +85,12 @@ $(document).ready(function() {
 
         //draw co-ordinates on canvas map
 
+        ctx.beginPath();
+        ctx.moveTo(move_posX, move_posY);
+        ctx.strokeStyle = "black";
         ctx.lineTo(canvas.width/2 + Number(xIN), canvas.height/2 - Number(yIN));
+        move_posX = canvas.width/2 + Number(xIN);
+        move_posY = canvas.height/2 - Number(yIN);
         ctx.stroke();
 
         var new_locaiton_set = $(".location-set-new").clone(true);
@@ -90,6 +131,23 @@ $(document).ready(function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         origin.clearRect(0, 0, canvas.width, canvas.height);
 
+        function drawBoard(){
+        grid.beginPath();
+        grid.strokeStyle = "lightgray";
+        for (var x = 0; x <= canvasWidth; x += 50) {
+            grid.moveTo(0.5 + x + p, p);
+            grid.lineTo(0.5 + x + p, canvasHeight + p);
+        }
+
+        for (var x = 0; x <= canvasHeight; x += 50) {
+            grid.moveTo(p, 0.5 + x + p);
+            grid.lineTo(canvasWidth + p, 0.5 + x + p);
+        }
+        grid.stroke();
+        }
+
+        drawBoard();
+
         ctx.translate(canvas.width/2, canvas.height/2);
         var pos = canvas.getContext("2d");
         pos.fillStyle = 'darkblue';
@@ -105,6 +163,7 @@ $(document).ready(function() {
 
         var direction = ''
 
+        ctx.fillStyle = 'black';
         draw();
 
         document.getElementById("btnRight").addEventListener("click", function() {
@@ -258,14 +317,14 @@ $(document).ready(function() {
 
     function start_robot() {
 
-        
+
         setInterval(function() {
             $.ajax({
                 url: '/newpoints',
                 type: 'GET',
                 success: function(response) {
                     var json_data = $.parseJSON(response);
-                    
+
                     if(json_data.length==0)
                         return;
 
@@ -274,15 +333,54 @@ $(document).ready(function() {
                         var x = parseFloat(item.x);
                         var y = parseFloat(item.y);
                         console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
-                        if (item.type == "points") {
-                            dot(x, y);
+                        if (item.type == "point") {
+                            //dot(x, y);
+                            draw_map.beginPath();
+                            draw_map.moveTo(x, y);
+                            draw_map.fillStyle = "blue";
+                            //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
+                            draw_map.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 3, 3);
+                            //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
+                            draw_map.stroke();
+                            point_x = x;
+                            point_y = y;
+
                         } else if (item.type == "self_location") {
-                            line(x, y);
+                            //line(x, y);
+                            robot_pos.beginPath();
+                            robot_pos.moveTo(x, y);
+                            draw_map.fillStyle = "red";
+                            robot_pos.clearRect(canvas.width/2 + Number(robot_x), canvas.height/2 - Number(robot_y), 10, 10);
+                            robot_pos.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 10, 10);
+                            robot_pos.stroke();
+                            robot_x = x;
+                            robot_y = y;
                         }
                     });
                 }
             });
 
         }, 2000);
+    }
+
+    function test(item){
+      var x = parseFloat(item.x);
+      var y = parseFloat(item.y);
+      console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
+      if (item.type == "points") {
+          //dot(x, y);
+          draw_map.lineTo(canvas.width/2 + Number(x), canvas.height/2 - Number(y), );
+          draw_map.stroke();
+
+      } else if (item.type == "self_location") {
+          //line(x, y);
+          robot_pos.moveTo(x, y);
+          robot_pos.clearRect(canvas.width/2 + Number(robot_x), canvas.height/2 - Number(robot_y), 10, 10);
+          robot_pos.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 10, 10);
+          robot_pos.stroke();
+          robot_x = x;
+          robot_y = y;
+      }
+
     }
 });

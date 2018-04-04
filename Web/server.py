@@ -7,7 +7,7 @@ import paramiko
 points = []
 lock = threading.Lock()
 
-address = "00:1A:7D:DA:71:13"
+address = "28:C2:DD:44:20:C8"
 channel = 1
 size = 1024
 ssh = None

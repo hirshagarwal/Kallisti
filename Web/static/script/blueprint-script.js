@@ -16,6 +16,7 @@ $(document).ready(function() {
     //stores the x and y values
     var coords = [];
 
+    var orientations = ["up", "right", "down", "left"]
     var canvas = document.getElementById("map-tab");
     var canvasWidth = canvas.width;
     var canvasHeight = canvas.height;
@@ -330,16 +331,26 @@ $(document).ready(function() {
 
                     json_data.forEach(function(item) {
 
+                        if(item.type == "orientation_update")
+                        {
+                            if(item.new_orientation == "left")
+                            {
+                                var temp = orientations.pop()
+                            }
+                        }
+
+
+
                         var x = parseFloat(item.x);
                         var y = parseFloat(item.y);
                         console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
                         if (item.type == "point") {
                             //dot(x, y);
                             draw_map.beginPath();
-                            draw_map.moveTo(x, y);
+                            draw_map.moveTo(point_x, point_y);
                             draw_map.fillStyle = "blue";
                             //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
-                            draw_map.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 3, 3);
+                            draw_map.lineTo(canvas.width/2 + Number(x), canvas.height/2 - Number(y));
                             //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
                             draw_map.stroke();
                             point_x = x;

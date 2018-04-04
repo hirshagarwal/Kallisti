@@ -43,8 +43,8 @@ def moveLEFT(speed, time):
 def rotateLEFT(speed, time):
     m1.run_timed(speed_sp = speed, time_sp = time)
     m2.run_timed(speed_sp = speed, time_sp = time)
-    m3.run_timed(speed_sp = speed, time_sp = time)
-    m4.run_timed(speed_sp = speed, time_sp = time)
+    m3.run_timed(speed_sp = -speed, time_sp = time)
+    m4.run_timed(speed_sp = -speed, time_sp = time)
 
 def rotateRIGHT(speed, time):
     m1.run_timed(speed_sp = -speed, time_sp = time)
@@ -99,9 +99,24 @@ def movementLoop():
             elif key == 57: # turn right (numpad 9)
                rotateRIGHT(100, 100)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     while True:
+        input_val = input("enter a direction")
+        if input_val == "w":
+            dist = ult1.distance_centimeters()
+            print(dist)
+        elif input_val == "a":
+            dist = ult4.distance_centimeters()
+            print(dist)
+        elif input_val == "s":
+            dist = ult3.distance_centimeters()
+            print(dist)
+        elif input_val == "d":
+            dist = ult2.distance_centimeters()
+            print(dist)
+
+""""    while True:
         cause_of_stopping = movementLoop()
         if (cause_of_stopping == obj_detected):
 
@@ -117,3 +132,4 @@ if __name__ == "__main__":
         else:
             print("Unexpected string returned: " + cause_of_stopping + "\nSystem stopping...")
             break
+            """

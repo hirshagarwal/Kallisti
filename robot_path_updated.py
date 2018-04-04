@@ -372,6 +372,31 @@ def find_new_wall(distance):
         return Wall(temp_point, end_point)
 
 
+def find_location_from_corner(wall, front_dist, corner_type):
+    wall_end_point = wall.endPoint
+    x = wall_end_point.x
+    y = wall_end_point.y
+    cur_orientation = current_orientation()
+    if corner_type == "convex":
+        if cur_orientation == "up":
+            return Point(x + 12, y)
+        elif cur_orientation == "down":
+            return Point(x - 12, y)
+        elif cur_orientation == "left":
+            return Point(x, y + 12)
+        else:
+            return Point(x, y - 12)
+    elif corner_type == "concave":
+        if cur_orientation == "up":
+            return Point(x + 12, y - front_dist)
+        elif cur_orientation == "down":
+            return Point(x - 12, y + front_dist)
+        elif cur_orientation == "left":
+            return Point(x + front_dist, y + 12)
+        else:
+            return Point(x - front_dist, y - 12)
+
+
 def current_orientation():
     return orientations[0]
 
@@ -382,6 +407,7 @@ def path_loop_2():
     left_init = getLeftDistance()
     back_init = getBackDistance()
     prev_corner_type = "concave"
+    current_location = Point(0, 0)
     walls = []
 
     while True:
@@ -392,14 +418,17 @@ def path_loop_2():
             total_length = front_end + back_end
             # Find new wall based on orientation
             new_wall = find_new_wall(total_length)
+            current_location = find_location_from_corner(new_wall, front_end, "concave")
             # Change orientation
             orientateRight()
             # prev_corner type doesn't need to be changed
 
         elif prev_corner_type == "concave" and next_instruction == "Left":
+            front_end = getFrontDistance()
             back_end = getBackDistance()
             total_length = back_end
             new_wall = find_new_wall(total_length)
+            current_location = find_location_from_corner(new_wall, front_end, "convex")
             orientateLeft()
             prev_corner_type = "convex"
 
@@ -408,13 +437,16 @@ def path_loop_2():
             back_end = getBackDistance()
             total_length = front_end + back_end - back_init
             new_wall = find_new_wall(total_length)
+            current_location = find_location_from_corner(new_wall, front_end, "concave")
             orientateRight()
             prev_corner_type = "concave"
 
-        elif prev_corner_type == "convex" and next_instruction == "Left":
+        else:  # prev_corner_type = "convex" and next_instruction = "Left"
+            front_end = getFrontDistance()
             back_end = getBackDistance()
             total_length = back_end - back_init
             new_wall = find_new_wall(total_length)
+            current_location = find_location_from_corner(new_wall, front_end, "convex")
             orientateLeft()
 
         walls.append(new_wall)

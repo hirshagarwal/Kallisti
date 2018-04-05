@@ -198,6 +198,12 @@ def getLeftDistance():
     return getSingleDistanceHelper(leftSensor)
 
 
+def get_front_quick():
+    return frontSensor.distance_centimeters + 6
+
+
+def get_back_quick():
+    return backSensor.distance_centimeters + 6
 
 def getSingleDistanceHelper(sensor):
 
@@ -362,7 +368,7 @@ def path_loop_2():
     global prev_wall
     global prev_back_distancef
     back_init = getBackDistance()
-    
+
     prev_corner_type = "concave"
     
     walls = []
@@ -372,7 +378,6 @@ def path_loop_2():
         # should start each loop pressed against the wall
         move_right_approx_dist(0.5)
         time.sleep(0.5)
-        current_location = Point(left_init, back_init)
         # toSend("self_location", current_location.x, current_location.y)
         if getBackDistance()+getFrontDistance()>150:
             next_instruction = long_wall_loop()
@@ -489,14 +494,14 @@ def wall_loop_2():
             return turn_right
 
         elif err_check_too_far(new_left):
-            leftMotor.run_timed(speed_sp=200, time_sp=1000)
+            moveLEFT(300, 1000)
             # veer_slightly_left(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
 
         elif err_check_too_close(new_left):
-            rightMotor.run_timed(speed_sp=-200, time_sp=1000)
+            moveLEFT(300, 1000)
             # veer_slightly_right(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)

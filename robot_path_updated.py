@@ -160,8 +160,8 @@ def veer_slightly_left(speed, t):
 
 
 def veer_slightly_right(speed, t):
-    rightMotor.run_timed(speed_sp=speed*1.5, time_sp=t)
-    leftMotor.run_timed(speed_sp=-speed, time_sp=t)
+    rightMotor.run_timed(speed_sp=-speed*1.5, time_sp=t)
+    leftMotor.run_timed(speed_sp=speed, time_sp=t)
 
 
 def orientateLeft():
@@ -280,18 +280,15 @@ def move_to_corner(time_amount, direction, approx_wall_dist):
 
 
 def turn_left_convex():
-    # move_right_approx_dist(10)
-    # time.sleep(2)
-    # move_forward_approx_dist(25)
-    # time.sleep(2)
-    # rotate_left_90_approx()
-    # time.sleep(1)
-    # move_forward_approx_dist(25)
-    # crash_into_wall("towards")
-    # move_back_to_corner(800, "backwards", 12)
     moveFORWARD(300, 3000)
     moveLEFT(300, 3000)
     time.sleep(3)
+    move_to_corner(150, "backwards", 20)
+    time.sleep(2)
+    #leftMotor.run_timed(speed_sp=300, time_sp=1000)
+    #rightMotor.run_timed(speed_sp=150, time_sp=1000)
+    veer_slightly_right(150, 1000)
+    time.sleep(1)
 
 
 def turn_right_concave():
@@ -305,7 +302,7 @@ def turn_right_concave():
     moveLEFT(300, 1000)
     time.sleep(2)
     # Try removing this final moving backward and see how it goes
-    moveBACKWARD(300, 1000)
+    # moveBACKWARD(300, 1000)
 
 
 def find_new_wall(distance):
@@ -436,7 +433,8 @@ def long_wall_loop():
     moved_distance = 0
     counter = 0
     while True:
-        if counter%2 ==0 and counter != 0:
+        # TODO test that this works
+        if counter%3 ==0 and counter != 0:
             moveLEFT(300, 1000)
             #veer_slightly_right(150, 500)
             time.sleep(1)
@@ -513,12 +511,7 @@ def to_next_wall_2(instruction):
         # print("turn left")
         # toSend("new_orientation", "Left")
         turn_left_convex()
-        move_to_corner(150, "backwards", 20)
-        time.sleep(2)
-        leftMotor.run_timed(speed_sp=300, time_sp=1000)
-        rightMotor.run_timed(speed_sp=150, time_sp=1000)
-        # veer_slightly_right(150, 500)
-        time.sleep(1)
+
     else:
         # print("turn right")
         # toSend("new_orientation", "Right")

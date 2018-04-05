@@ -154,6 +154,16 @@ def rotate_left_90_approx():
     leftMotor.run_to_rel_pos(position_sp=-300, speed_sp=500)
 
 
+def veer_slightly_left(speed, t):
+    rightMotor.run_timed(speed_sp=-speed, time_sp=t)
+    leftMotor.run_timed(speed_sp=speed*1.5, time_sp=t)
+
+
+def veer_slightly_right(speed, t):
+    rightMotor.run_timed(speed_sp=speed*1.5, time_sp=t)
+    leftMotor.run_timed(speed_sp=-speed, time_sp=t)
+
+
 def orientateLeft():
     global orientations
     temp_orient = orientations.pop()
@@ -186,6 +196,7 @@ def getBackDistance():
 
 def getLeftDistance():
     return getSingleDistanceHelper(leftSensor)
+
 
 
 def getSingleDistanceHelper(sensor):
@@ -277,55 +288,6 @@ def turn_left_convex():
     time.sleep(3)
 
 
-def crash_into_wall(direction):
-    """
-    Lets the robot gracefully crash into a wall
-    :param direction: has values towards or away depending on if the robot is moving towards or away from the wall
-    :return:
-    """
-    distances = [999]
-    num_distance_errors = 0
-    # print("Crashing into wall lol")
-    while True:
-        dist_left = getLeftDistance()
-        # print("dist_left = {}".format(dist_left))
-        distances.append(dist_left)
-        # print("prev_dist = {}\n".format(distances[-2]))
-        if distances[-2] > dist_left > 18.1:
-            moveLEFT(200, 1000)
-            time.sleep(1)
-        elif is_close(dist_left, distances[-2], 1) and dist_left > 18.2:
-            # print("Rotating in - get rekt")
-            if direction == "towards":
-                rotate_right_small()
-                time.sleep(0.5)
-            else:  # direction == "away":
-                rotate_left_small()
-                time.sleep(0.5)
-            moveLEFT(100, 500)
-            time.sleep(0.5)
-        elif num_distance_errors > 10:
-            # print("Large number of errors seen!")
-            # Move back a little if there are a lot of erroneous readings
-            moveRIGHT(100, 500)
-            time.sleep(0.5)
-            rotate_left_small()
-            time.sleep(0.5)
-            num_distance_errors = 0
-        elif dist_left <= 17.9 or dist_left >= 255:
-            # print("Weird distance received #poorpatter: {}".format(dist_left))
-            # Ignore readings less than 12 or 255 as they are wrong
-            distances.pop()
-            num_distance_errors += 1
-            continue
-        else:
-            check_left = getLeftDistance()
-            if check_left <= 18.1:
-                moveLEFT(100, 2000)
-                time.sleep(2)
-                break
-
-
 def turn_right_concave():
     move_right_approx_dist(3)
     time.sleep(2)
@@ -336,10 +298,8 @@ def turn_right_concave():
     moveBACKWARD(300, 1000)
     moveLEFT(300, 1000)
     time.sleep(2)
-    moveBACKWARD(300, 1000)
-
-    # crash_into_wall("towards")
-
+    # Try removing this final moving backward and see how it goes
+    # moveBACKWARD(300, 1000)
 
 
 def find_new_wall(distance):
@@ -463,6 +423,7 @@ def path_loop_2():
         # Reset wall measurements after moving to next wall
         back_init = getBackDistance()
 
+
 def long_wall_loop():
     # print("in long wall loop")
     prev_front_distance = getFrontDistance()
@@ -471,7 +432,7 @@ def long_wall_loop():
     counter = 0
     while True:
         if counter%2 ==0 and counter != 0:
-            moveLEFT(300, 1000)
+            veer_slightly_right(150, 500)
             time.sleep(0.5)
             move_right_approx_dist(0.5)
             time.sleep(1)
@@ -493,15 +454,13 @@ def long_wall_loop():
             return turn_left
 
         elif new_front <= front_threshold:
+            veer_slightly_right(150, 1000)
+            time.sleep(1)
             return turn_right
-
-
 
 
 def wall_loop_2():
     prev_front_distance = getFrontDistance()
-    init_back_distance = getBackDistance()
-    moved_distance = 0
 
     while True:
         moveFORWARD(300, 1000)
@@ -522,20 +481,18 @@ def wall_loop_2():
             return turn_left
 
         elif new_front <= front_threshold:
+            veer_slightly_right(150, 1000)
+            time.sleep(1)
             return turn_right
 
         elif err_check_too_far(new_left):
-            #rotate_left_small()
-            #time.sleep(0.5)
-            #moveLEFT(200, 500)
-            #time.sleep(0.5)
-            leftMotor.run_timed(speed_sp=200, time_sp=1000)
+            veer_slightly_left(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
 
         elif err_check_too_close(new_left):
-            rightMotor.run_timed(speed_sp=-200, time_sp=1000)
+            veer_slightly_right(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
@@ -548,7 +505,7 @@ def to_next_wall_2(instruction):
         turn_left_convex()
         move_to_corner(150, "backwards", 20)
         time.sleep(2)
-        leftMotor.run_timed(speed_sp=500, time_sp=500)
+        veer_slightly_right(150, 500)
         time.sleep(0.5)
     else:
         # print("turn right")

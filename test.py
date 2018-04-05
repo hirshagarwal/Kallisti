@@ -179,19 +179,23 @@ def test_orientation():
 
 
 def main():
+    """
+
+    :return:
+    """
     print("Ready to test!\n-----------------")
     while True:
         comm = input("Enter what you want to test: ")
-        if re.match('motor ([a-zA-Z]*) ([0-9]*) ([0-9]*)', comm):
+        if re.match('motor ([a-zA-Z]*) -?([0-9]+) ([0-9]+)', comm):
             strings = comm.split(" ")
             test_motor(strings[1], strings[2], strings[3])
         elif re.match('sensor ([a-zA-Z]*)', comm):
             strings = comm.split(" ")
             test_sensor(strings[1])
-        elif re.match('rotate_left ([0-9]*) ([0-9]*)', comm):
+        elif re.match('rotate_left -?([0-9]+) ([0-9]+)', comm):
             strings = comm.split(" ")
             test_rotation("left", strings[1], strings[2])
-        elif re.match('rotate_right ([0-9]*) ([0-9]*)', comm):
+        elif re.match('rotate_right -?([0-9]+) ([0-9]+)', comm):
             strings = comm.split(" ")
             test_rotation("right", strings[1], strings[2])
         elif comm == "turn_left":

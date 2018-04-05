@@ -4,6 +4,11 @@ from collections import Counter
 from MapObjects import Wall, Point
 import time
 import math
+import random
+import daemonocle
+import sys
+import socket
+import json
 # from client import *
 
 # Test the new branch
@@ -22,10 +27,10 @@ ult4 = ev3.UltrasonicSensor('in4')  # Left-sensor
 
 
 
-# channel = 1
-# serverAddress = '28:C2:DD:44:20:C8'
-# s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-# s.connect((serverAddress, channel))
+channel = 1
+serverAddress = '28:C2:DD:44:20:C8'
+s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+s.connect((serverAddress, channel))
 
 
 
@@ -64,6 +69,8 @@ start_point = Point(0, 0)
 end_point = start_point
 
 orientations = ["up", "right", "down", "left"]
+
+left_init = 0
 
 
 
@@ -134,10 +141,10 @@ def move_forward_approx_dist(distance=10):
 
 
 def rotate_right_90_approx():
-    frontMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
-    rightMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
-    backMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
-    leftMotor.run_to_rel_pos(position_sp=-320, speed_sp=400)
+    frontMotor.run_to_rel_pos(position_sp=-280, speed_sp=400)
+    rightMotor.run_to_rel_pos(position_sp=-280, speed_sp=400)
+    backMotor.run_to_rel_pos(position_sp=-280, speed_sp=400)
+    leftMotor.run_to_rel_pos(position_sp=-280, speed_sp=400)
 
 
 def rotate_left_90_approx():
@@ -173,7 +180,7 @@ def getRightDistance():
 
 
 def getBackDistance():
-    # print("Get Back Distance: ", backSensor == ult4)
+    # # print("Get Back Distance: ", backSensor == ult4)
     return getSingleDistanceHelper(backSensor)
 
 
@@ -267,6 +274,7 @@ def turn_left_convex():
     # move_back_to_corner(800, "backwards", 12)
     moveFORWARD(300, 3000)
     moveLEFT(300, 3000)
+    time.sleep(3)
 
 
 def crash_into_wall(direction):
@@ -277,15 +285,17 @@ def crash_into_wall(direction):
     """
     distances = [999]
     num_distance_errors = 0
+    # print("Crashing into wall lol")
     while True:
         dist_left = getLeftDistance()
-        print("dist_left = {}".format(dist_left))
+        # print("dist_left = {}".format(dist_left))
         distances.append(dist_left)
-        print("prev_dist = {}\n".format(distances[-2]))
-        if distances[-2] > dist_left > 12.1:
+        # print("prev_dist = {}\n".format(distances[-2]))
+        if distances[-2] > dist_left > 18.1:
             moveLEFT(200, 1000)
             time.sleep(1)
-        elif distances[-2] == dist_left and dist_left > 12.2:
+        elif is_close(dist_left, distances[-2], 1) and dist_left > 18.2:
+            # print("Rotating in - get rekt")
             if direction == "towards":
                 rotate_right_small()
                 time.sleep(0.5)
@@ -295,21 +305,22 @@ def crash_into_wall(direction):
             moveLEFT(100, 500)
             time.sleep(0.5)
         elif num_distance_errors > 10:
-            print("Large number of errors seen!")
+            # print("Large number of errors seen!")
             # Move back a little if there are a lot of erroneous readings
             moveRIGHT(100, 500)
             time.sleep(0.5)
             rotate_left_small()
             time.sleep(0.5)
             num_distance_errors = 0
-        elif dist_left <= 12 or dist_left >= 255:
+        elif dist_left <= 17.9 or dist_left >= 255:
+            # print("Weird distance received #poorpatter: {}".format(dist_left))
             # Ignore readings less than 12 or 255 as they are wrong
             distances.pop()
             num_distance_errors += 1
             continue
         else:
             check_left = getLeftDistance()
-            if check_left <= 12.1:
+            if check_left <= 18.1:
                 moveLEFT(100, 2000)
                 time.sleep(2)
                 break
@@ -325,7 +336,7 @@ def turn_right_concave():
     moveBACKWARD(300, 1000)
     moveLEFT(300, 1000)
     time.sleep(2)
-    moveBACKWARD(300, 500)
+    moveBACKWARD(300, 1000)
 
     # crash_into_wall("towards")
 
@@ -334,26 +345,26 @@ def turn_right_concave():
 def find_new_wall(distance):
     global end_point
     temp_point = end_point
-    print("\nStart point = {}".format(temp_point))
+    # print("\nStart point = {}".format(temp_point))
     x = end_point.x
     y = end_point.y
     cur_orientation = current_orientation()
-    print("Orientation = {}".format(cur_orientation))
+    # print("Orientation = {}".format(cur_orientation))
     if cur_orientation == "up":
         end_point = Point(x, y + distance)
-        print("End point = {}\n".format(end_point))
+        # print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
     elif cur_orientation == "down":
         end_point = Point(x, y - distance)
-        print("End point = {}\n".format(end_point))
+        # print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
     elif cur_orientation == "left":
         end_point = Point(x - distance, y)
-        print("End point = {}\n".format(end_point))
+        # print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
     else:
         end_point = Point(x + distance, y)
-        print("End point = {}\n".format(end_point))
+        # print("End point = {}\n".format(end_point))
         return Wall(temp_point, end_point)
 
 
@@ -387,18 +398,26 @@ def current_orientation():
 
 
 def path_loop_2():
+    # print("Lel you're trying again aren't you?")
     global prev_wall
-    global prev_back_distance
-    left_init = getLeftDistance()
+    global prev_back_distancef
     back_init = getBackDistance()
+    
     prev_corner_type = "concave"
-    current_location = Point(left_init, back_init)
+    
     walls = []
-    # should start each loop pressed against the wall
+    
     while True:
+        # print("starting new wall")
+        # should start each loop pressed against the wall
+        move_right_approx_dist(0.5)
+        time.sleep(0.5)
+        current_location = Point(left_init, back_init)
         # toSend("self_location", current_location.x, current_location.y)
-        move_right_approx_dist(8)
-        next_instruction = wall_loop_2(left_init)
+        if getBackDistance()+getFrontDistance()>150:
+            next_instruction = long_wall_loop()
+        else:
+            next_instruction = wall_loop_2()
         if prev_corner_type == "concave" and next_instruction == "Right":
             front_end = getFrontDistance()
             back_end = getBackDistance()
@@ -438,17 +457,52 @@ def path_loop_2():
 
         walls.append(new_wall)
         # toSend("self_location", current_location.x, current_location.y)
-        # toSend("point", new_wall.startPoint.x, new_wall.startPoint.y)
-        # toSend("point", new_wall.endPoint.x, new_wall.endPoint.y)
+        toSend("point", new_wall.startPoint.x, new_wall.startPoint.y)
+        toSend("point", new_wall.endPoint.x, new_wall.endPoint.y)
         to_next_wall_2(next_instruction)
         # Reset wall measurements after moving to next wall
-        left_init = getLeftDistance()
         back_init = getBackDistance()
 
-
-def wall_loop_2(left_init_dist):
+def long_wall_loop():
+    # print("in long wall loop")
     prev_front_distance = getFrontDistance()
+    init_back_distance = getBackDistance()
     moved_distance = 0
+    counter = 0
+    while True:
+        if counter%2 ==0 and counter != 0:
+            moveLEFT(300, 1000)
+            time.sleep(0.5)
+            move_right_approx_dist(0.5)
+            time.sleep(1)
+
+        moveFORWARD(300, 1000)
+        time.sleep(1)
+        new_left = getLeftDistance()
+        new_front = getFrontDistance()
+        moved_distance = new_front - prev_front_distance
+        prev_front_distance = new_front
+        # toSend("length", moved_distance)
+        # print("left_init: {}, new_left: {}, new_front: {}".format(
+        #    20, new_left, new_front))
+        counter += 1
+        if check_new_wall(new_left):
+            move_to_corner(150, "forwards", 20)
+            moveLEFT(200, 1000)
+            time.sleep(1)
+            return turn_left
+
+        elif new_front <= front_threshold:
+            return turn_right
+
+
+
+
+def wall_loop_2():
+    prev_front_distance = getFrontDistance()
+    init_back_distance = getBackDistance()
+    moved_distance = 0
+
     while True:
         moveFORWARD(300, 1000)
         time.sleep(1)
@@ -459,89 +513,73 @@ def wall_loop_2(left_init_dist):
         # toSend("length", moved_distance)
 
         # If a new wall is found, return the total length of the wall
-        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
-            left_init_dist, new_left, new_front))
-        if check_new_wall(left_init_dist, new_left):
-            move_to_corner(150, "forwards", left_init_dist)
-            moveLEFT(200, 1000)
+        # print("left_init: {}, new_left: {}, new_front: {}".format(
+        #    20, new_left, new_front))
+        if check_new_wall(new_left):
+            move_to_corner(150, "forwards", 20)
+            rightMotor.run_timed(speed_sp=500, time_sp=500)
             time.sleep(1)
             return turn_left
 
         elif new_front <= front_threshold:
             return turn_right
 
-        elif err_check_too_far(left_init_dist, new_left):
-            crash_into_wall("away")
-            move_right_approx_dist(8)
+        elif err_check_too_far(new_left):
+            #rotate_left_small()
+            #time.sleep(0.5)
+            #moveLEFT(200, 500)
+            #time.sleep(0.5)
+            leftMotor.run_timed(speed_sp=200, time_sp=1000)
+            time.sleep(1)
+            move_right_approx_dist(0.5)
             time.sleep(1)
 
-        elif err_check_too_close(left_init_dist, new_left):
-            crash_into_wall("towards")
-            move_right_approx_dist(8)
+        elif err_check_too_close(new_left):
+            rightMotor.run_timed(speed_sp=-200, time_sp=1000)
+            time.sleep(1)
+            move_right_approx_dist(0.5)
             time.sleep(1)
 
 
 def to_next_wall_2(instruction):
     if instruction == 'Left':
-        print("turn left")
+        # print("turn left")
         # toSend("new_orientation", "Left")
         turn_left_convex()
-        new_left = getLeftDistance()
-        move_to_corner(150, "backwards", new_left)
+        move_to_corner(150, "backwards", 20)
+        time.sleep(2)
+        leftMotor.run_timed(speed_sp=500, time_sp=500)
+        time.sleep(0.5)
     else:
-        print("turn right")
+        # print("turn right")
         # toSend("new_orientation", "Right")
         turn_right_concave()
 
 
-def err_check_too_close(left_init, left_current):
-    return left_init - left_current >= 2
+def err_check_too_close(left_current):
+    return 20 - left_current >= 1.5
 
 
-def err_check_too_far(left_init, left_current):
-    return left_current - left_init >= 2
+def err_check_too_far(left_current):
+    return left_current - 20 >= 2
 
 
-def check_new_wall(left_init, left_current):
+def check_new_wall(left_current):
     # Check if the current reading is a new wall, and repeats to be sure
-    return left_current - left_init >= left_corner_threshold and getLeftDistance() - left_init >= left_corner_threshold
+    return left_current - 20 >= left_corner_threshold and getLeftDistance() - 20 >= left_corner_threshold
 
 
 def is_close(num_1, num_2, threshold):
     return abs(num_1 - num_2) <= threshold
 
 
-def is_very_different(num_1, num_2):
-    return abs(num_1 - num_2) >= 10
-
-
-def left_turn_demo():
-    left_init = getLeftDistance()
-    while True:
-        moveFORWARD(300, 1000)
-        time.sleep(1)
-        new_left = getLeftDistance()
-        new_front = getFrontDistance()
-
-        # If a new wall is found, return the total length of the wall
-        print("left_init_dist: {}, new_left: {}, new_front: {}".format(
-            left_init, new_left, new_front))
-        if check_new_wall(left_init, new_left):
-            input("New wall detected. Press any key to continue")
-            break
-
-    move_to_corner(150, "forwards", left_init)
-    input("Moved back to wall. Press any key to continue")
-    moveLEFT(200, 1000)
-    # crash_into_wall("towards")
-    input("Try to turn around the corner. Press any key to continue")
-    turn_left_convex()
-    input("Turned around corner. Press any key to continue")
-    new_left = getLeftDistance()
-    move_to_corner(150, "backwards", new_left)
-
-
 if __name__ == "__main__":
-    print("Starting")
+    # print("Starting")
     # path_loop_demo()
-    left_turn_demo()
+    # path_loop_2()
+    daemon = daemonocle.Daemon(worker=path_loop_2, pidfile='/var/run/daemonocle_example.pid')
+    if len(sys.argv) < 2:
+        print("\nadd start/stop/restart at the end of command\n")
+    else:
+        daemon.do_action(sys.argv[1])
+

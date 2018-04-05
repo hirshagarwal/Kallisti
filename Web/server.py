@@ -97,7 +97,8 @@ def ssh_connection():
 
 @app.route('/start-robot')
 def start_robot():
-    stdin, stdout, stderr = ssh.exec_command("sudo -S python3 tcp_client_bt.py start")
+    print("starting...")
+    stdin, stdout, stderr = ssh.exec_command("sudo -S python3 robot_path_updated.py start")
     stdin.write("maker\n")
     stdin.flush()
     # Wait until command has been executed.

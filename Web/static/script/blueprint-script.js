@@ -343,7 +343,7 @@ $(document).ready(function() {
                                 var temp = orientations.shift();
                                 orientations.push(temp);
                             }
-                            break;
+                            return;
                         } 
                         else if (item.type == "length")
                         {
@@ -386,15 +386,16 @@ $(document).ready(function() {
                         console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
                         if (item.type == "point") {
                             //dot(x, y);
+                            console.log("try drawing?");
                             draw_map.beginPath();
                             draw_map.moveTo(point_x, point_y);
-                            draw_map.fillStyle = "blue";
+                            draw_map.strokeStyle = "blue";
                             //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
                             draw_map.lineTo(canvas.width/2 + Number(x), canvas.height/2 - Number(y));
                             //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
                             draw_map.stroke();
-                            point_x = x;
-                            point_y = y;
+                            point_x = canvas.width/2 + Number(x);
+                            point_y = canvas.height/2 - Number(y);
 
                         } else if (item.type == "self_location") {
                             //line(x, y);

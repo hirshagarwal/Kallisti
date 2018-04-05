@@ -372,13 +372,13 @@ def path_loop_2():
     prev_corner_type = "concave"
     
     walls = []
+    # toSend("self_location", 0, 0)
     
     while True:
         # print("starting new wall")
         # should start each loop pressed against the wall
         move_right_approx_dist(0.5)
         time.sleep(0.5)
-        # toSend("self_location", current_location.x, current_location.y)
         if getBackDistance()+getFrontDistance()>150:
             next_instruction = long_wall_loop()
         else:

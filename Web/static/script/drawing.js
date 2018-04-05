@@ -6,30 +6,7 @@ var counter = 1;
 var waypoints;
 var last_point;
 
-function line(x, y) {
 
-    waypoints=[];
-    counter=1;
-    if(last_point==undefined)
-    {
-        last_point={x:x, y:y};
-        return 0;
-    }
-    var points = [];
-    points.push(last_point);
-    points.push({ x: x, y: y });
-    waypoints = calcWaypoints(points[0], points[1]);
-    line_animate();
-    console.log("not here");
-    last_point = points[1];
-}
-
-
-
-function dot(x, y) {
-    ctx.fillStyle = "blue";
-    ctx.fillRect(x, y, 5, 5);
-}
 
 function calcWaypoints(vertex1, vertex2) {
     var temp_points = [];
@@ -68,10 +45,10 @@ function line_animate() {
         requestAnimationFrame(line_animate);
     }
     console.log("here");
-    ctx.beginPath();
-    ctx.moveTo(waypoints[counter - 1].x, waypoints[counter - 1].y);
-    ctx.lineTo(waypoints[counter].x, waypoints[counter].y);
-    ctx.stroke();
+    draw_map.beginPath();
+    draw_map.moveTo(waypoints[counter - 1].x, waypoints[counter - 1].y);
+    draw_map.lineTo(waypoints[counter].x, waypoints[counter].y);
+    draw_map.stroke();
     counter++;
 
 }

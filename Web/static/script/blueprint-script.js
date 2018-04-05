@@ -23,46 +23,47 @@ $(document).ready(function() {
 
     var ctx = canvas.getContext("2d");
     //ctx.translate(250, 250);
-    ctx.moveTo(canvasWidth/2, canvasHeight/2);
+    ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
 
     var draw_map = canvas.getContext("2d");
-    draw_map.moveTo(canvasWidth/2, canvasHeight/2);
+    draw_map.moveTo(canvasWidth / 2, canvasHeight / 2);
 
     var robot_pos = canvas.getContext("2d");
-    robot_pos.moveTo(canvasWidth/2, canvasHeight/2);
+    robot_pos.moveTo(canvasWidth / 2, canvasHeight / 2);
 
     var origin = canvas.getContext("2d");
     origin.fillStyle = "#FF0000";
 
     var squareSize = 7.5;
-    origin.fillRect(canvasWidth/2 - squareSize/2 ,canvasHeight/2 - squareSize/2 , squareSize, squareSize);
+    origin.fillRect(canvasWidth / 2 - squareSize / 2, canvasHeight / 2 - squareSize / 2, squareSize, squareSize);
 
     var robot_x = 0;
     var robot_y = 0;
 
-    var point_x = 0;
-    var point_y = 0;
+    var point_x = canvas.width / 2;
+    var point_y = canvas.height / 2;
 
     var grid = canvas.getContext("2d");
 
     var p = 0;
-    function drawBoard(){
-    grid.beginPath();
-    grid.strokeStyle = "lightgray";
-    for (var x = 0; x <= canvasWidth; x += 50) {
-        grid.moveTo(0.5 + x + p, p);
-        grid.lineTo(0.5 + x + p, canvasHeight + p);
+
+    function drawBoard() {
+        grid.beginPath();
+        grid.strokeStyle = "lightgray";
+        for (var x = 0; x <= canvasWidth; x += 50) {
+            grid.moveTo(0.5 + x + p, p);
+            grid.lineTo(0.5 + x + p, canvasHeight + p);
+        }
+
+        for (var x = 0; x <= canvasHeight; x += 50) {
+            grid.moveTo(p, 0.5 + x + p);
+            grid.lineTo(canvasWidth + p, 0.5 + x + p);
+        }
+        grid.stroke();
     }
 
-    for (var x = 0; x <= canvasHeight; x += 50) {
-        grid.moveTo(p, 0.5 + x + p);
-        grid.lineTo(canvasWidth + p, 0.5 + x + p);
-    }
-    grid.stroke();
-    }
-
-    var move_posX = canvasWidth/2;
-    var move_posY = canvasHeight/2;
+    var move_posX = canvasWidth / 2;
+    var move_posY = canvasHeight / 2;
 
     drawBoard();
 
@@ -76,7 +77,7 @@ $(document).ready(function() {
             $("#finish-button").html("Finish");
         }
 
-        var neededId = 'id'.concat((ids-1).toString());
+        var neededId = 'id'.concat((ids - 1).toString());
 
         //capture user input
         var xIN = document.getElementById(neededId).getElementsByClassName('ui input left')[0].children[0].value;
@@ -89,13 +90,13 @@ $(document).ready(function() {
         ctx.beginPath();
         ctx.moveTo(move_posX, move_posY);
         ctx.strokeStyle = "black";
-        ctx.lineTo(canvas.width/2 + Number(xIN), canvas.height/2 - Number(yIN));
-        move_posX = canvas.width/2 + Number(xIN);
-        move_posY = canvas.height/2 - Number(yIN);
+        ctx.lineTo(canvas.width / 2 + Number(xIN), canvas.height / 2 - Number(yIN));
+        move_posX = canvas.width / 2 + Number(xIN);
+        move_posY = canvas.height / 2 - Number(yIN);
         ctx.stroke();
 
         var new_locaiton_set = $(".location-set-new").clone(true);
-        new_locaiton_set.attr('id', 'id'+ ids++);
+        new_locaiton_set.attr('id', 'id' + ids++);
 
         new_locaiton_set.css('display', 'none'); // Fade in later.
 
@@ -132,24 +133,24 @@ $(document).ready(function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         origin.clearRect(0, 0, canvas.width, canvas.height);
 
-        function drawBoard(){
-        grid.beginPath();
-        grid.strokeStyle = "lightgray";
-        for (var x = 0; x <= canvasWidth; x += 50) {
-            grid.moveTo(0.5 + x + p, p);
-            grid.lineTo(0.5 + x + p, canvasHeight + p);
-        }
+        function drawBoard() {
+            grid.beginPath();
+            grid.strokeStyle = "lightgray";
+            for (var x = 0; x <= canvasWidth; x += 50) {
+                grid.moveTo(0.5 + x + p, p);
+                grid.lineTo(0.5 + x + p, canvasHeight + p);
+            }
 
-        for (var x = 0; x <= canvasHeight; x += 50) {
-            grid.moveTo(p, 0.5 + x + p);
-            grid.lineTo(canvasWidth + p, 0.5 + x + p);
-        }
-        grid.stroke();
+            for (var x = 0; x <= canvasHeight; x += 50) {
+                grid.moveTo(p, 0.5 + x + p);
+                grid.lineTo(canvasWidth + p, 0.5 + x + p);
+            }
+            grid.stroke();
         }
 
         drawBoard();
 
-        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.translate(canvas.width / 2, canvas.height / 2);
         var pos = canvas.getContext("2d");
         pos.fillStyle = 'darkblue';
 
@@ -168,39 +169,42 @@ $(document).ready(function() {
         draw();
 
         document.getElementById("btnRight").addEventListener("click", function() {
-            if($length.value != '') {
-            length = $length.value;
-            direction = 'right';
-            draw();
+            if ($length.value != '') {
+                length = $length.value;
+                direction = 'right';
+                draw();
             }
         });
 
         document.getElementById("btnLeft").addEventListener("click", function() {
-            if($length.value != '') {
-            length = $length.value;
-            direction = 'left';
-            draw();
+            if ($length.value != '') {
+                length = $length.value;
+                direction = 'left';
+                draw();
             }
         });
 
         document.getElementById("btnUp").addEventListener("click", function() {
-            if($length.value != '') {
-            length = $length.value;
-            direction = 'up';
-            draw();
+            if ($length.value != '') {
+                length = $length.value;
+                direction = 'up';
+                draw();
             }
         });
 
         document.getElementById("btnDown").addEventListener("click", function() {
-            if($length.value != '') {
-            length = $length.value;
-            direction = 'down';
-            draw();
+            if ($length.value != '') {
+                length = $length.value;
+                direction = 'down';
+                draw();
             }
         });
 
         function draw() {
             if (direction == 'right') {
+                ctx.beginPath();
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 3;
                 ctx.moveTo(x1, y1);
                 x2 = x1 + parseInt(length);
                 ctx.lineTo(x2, y2);
@@ -215,6 +219,9 @@ $(document).ready(function() {
             }
 
             if (direction == 'left') {
+                ctx.beginPath();
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 3;
                 ctx.moveTo(x1, y1);
                 x2 = x1 - parseInt(length);
                 ctx.lineTo(x2, y2);
@@ -229,6 +236,9 @@ $(document).ready(function() {
             }
 
             if (direction == 'up') {
+                ctx.beginPath();
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 3;
                 ctx.moveTo(x1, y1);
                 y2 = y1 - parseInt(length);
                 ctx.lineTo(x2, y2);
@@ -243,6 +253,9 @@ $(document).ready(function() {
             }
 
             if (direction == 'down') {
+                ctx.beginPath();
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 3;
                 ctx.moveTo(x1, y1);
                 y2 = y1 + parseInt(length);
                 ctx.lineTo(x2, y2);
@@ -279,7 +292,7 @@ $(document).ready(function() {
                 $("#start-button").removeClass('green');
                 $("#stop-button").addClass('red');
                 $("#stop-button").removeAttr('disabled');
-		        start_robot();
+                start_robot();
             },
             error: function() {
                 alert("Connection lost. Please examine the bluetooth connection.");
@@ -315,6 +328,58 @@ $(document).ready(function() {
 
     });
 
+    var vertices = [];
+    var counter = 1;
+    var waypoints;
+    var last_point;
+
+
+
+    function calcWaypoints(vertex1, vertex2) {
+        var temp_points = [];
+        var dx = vertex2.x - vertex1.x;
+        var dy = vertex2.y - vertex1.y;
+        for (var i = 0; i <= 100; i++) {
+            var x = vertex1.x + dx * i / 100;
+            var y = vertex1.y + dy * i / 100;
+            temp_points.push({ x: x, y: y });
+        }
+        return temp_points;
+    }
+
+
+    function drawline(x, y) {
+
+        waypoints = [];
+        counter = 1;
+        if (last_point == undefined) {
+            last_point = { x: x, y: y };
+            return 0;
+        }
+        var points = [];
+        points.push(last_point);
+        points.push({ x: x, y: y });
+        waypoints = calcWaypoints(points[0], points[1]);
+        line_animate();
+        console.log("not here");
+        last_point = points[1];
+    }
+
+
+    function line_animate() {
+        if (counter < waypoints.length - 1) {
+            requestAnimationFrame(line_animate);
+        }
+        console.log("here");
+        draw_map.beginPath();
+        draw_map.strokeStyle = "blue";
+        draw_map.lineWidth = 3;
+        draw_map.moveTo(waypoints[counter - 1].x, waypoints[counter - 1].y);
+        draw_map.lineTo(waypoints[counter].x, waypoints[counter].y);
+        draw_map.stroke();
+        counter++;
+
+    }
 
     function start_robot() {
 
@@ -326,84 +391,86 @@ $(document).ready(function() {
                 success: function(response) {
                     var json_data = $.parseJSON(response);
 
-                    if(json_data.length==0)
+                    if (json_data.length == 0)
                         return;
 
                     json_data.forEach(function(item) {
 
-                        if(item.type == "orientation_update")
-                        {
-                            if(item.new_orientation == "Left")
-                            {
-                                var temp = orientations.pop();
-                                orientations.unshift(temp);
-                            }
-                            else if(item.new_orientation == "Right")
-                            {
-                                var temp = orientations.shift();
-                                orientations.push(temp);
-                            }
-                            return;
-                        } 
-                        else if (item.type == "length")
-                        {
-                            item.type ="self_location";
-                            var len = parseFloat(item.length)
-                            if(orientations[0] == "up")
-                            {
-                                item.push({
-                                    x:robot_x,
-                                    y:robot_y+len
-                                })
-                            }
-                            else if(orientations[0] == "left")
-                            {
-                                item.push({
-                                    x:robot_x-len,
-                                    y:robot_y
-                                })
-                            }
-                            else if(orientations[0] == "down")
-                            {
-                                item.push({
-                                    x:robot_x,
-                                    y:robot_y-len
-                                })
-                            }
-                            else if(orientations[0] == "right")
-                            {
-                                item.push({
-                                    x:robot_x+len,
-                                    y:robot_y
-                                })
-                            }
-                        }
+                        /*                        if(item.type == "orientation_update")
+                                                {
+                                                    if(item.new_orientation == "Left")
+                                                    {
+                                                        var temp = orientations.pop();
+                                                        orientations.unshift(temp);
+                                                    }
+                                                    else if(item.new_orientation == "Right")
+                                                    {
+                                                        var temp = orientations.shift();
+                                                        orientations.push(temp);
+                                                    }
+                                                    return;
+                                                } 
+                                                else if (item.type == "length")
+                                                {
+                                                    item.type ="self_location";
+                                                    var len = parseFloat(item.length)
+                                                    if(orientations[0] == "up")
+                                                    {
+                                                        item.push({
+                                                            x:robot_x,
+                                                            y:robot_y+len
+                                                        })
+                                                    }
+                                                    else if(orientations[0] == "left")
+                                                    {
+                                                        item.push({
+                                                            x:robot_x-len,
+                                                            y:robot_y
+                                                        })
+                                                    }
+                                                    else if(orientations[0] == "down")
+                                                    {
+                                                        item.push({
+                                                            x:robot_x,
+                                                            y:robot_y-len
+                                                        })
+                                                    }
+                                                    else if(orientations[0] == "right")
+                                                    {
+                                                        item.push({
+                                                            x:robot_x+len,
+                                                            y:robot_y
+                                                        })
+                                                    }
+                                                }*/
 
 
 
                         var x = parseFloat(item.x);
                         var y = parseFloat(item.y);
-                        console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
+                        console.log("type: " + item.type + " x: " + item.x + " y: " + item.y);
                         if (item.type == "point") {
                             //dot(x, y);
                             console.log("try drawing?");
-                            draw_map.beginPath();
-                            draw_map.moveTo(point_x, point_y);
-                            draw_map.strokeStyle = "blue";
-                            //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
-                            draw_map.lineTo(canvas.width/2 + Number(x), canvas.height/2 - Number(y));
-                            //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
-                            draw_map.stroke();
-                            point_x = canvas.width/2 + Number(x);
-                            point_y = canvas.height/2 - Number(y);
+                            drawline(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y))
+                            // draw_map.beginPath();
+                            // draw_map.moveTo(point_x, point_y);
+                            // draw_map.strokeStyle = "blue";
+                            // draw_map.lineWidth = 3;
+                            // //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
+                            // draw_map.lineTo(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y));
+                            // //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
+                            // draw_map.stroke();
+                            // point_x = canvas.width / 2 + Number(x);
+                            // point_y = canvas.height / 2 - Number(y);
 
                         } else if (item.type == "self_location") {
                             //line(x, y);
                             robot_pos.beginPath();
                             robot_pos.moveTo(x, y);
                             draw_map.fillStyle = "red";
-                            robot_pos.clearRect(canvas.width/2 + Number(robot_x), canvas.height/2 - Number(robot_y), 10, 10);
-                            robot_pos.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 10, 10);
+                            robot_pos.clearRect(canvas.width / 2 + Number(robot_x), canvas.height / 2 - Number(robot_y), 10, 10);
+                            robot_pos.fillRect(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y), 10, 10);
                             robot_pos.stroke();
                             robot_x = x;
                             robot_y = y;
@@ -415,24 +482,24 @@ $(document).ready(function() {
         }, 2000);
     }
 
-    function test(item){
-      var x = parseFloat(item.x);
-      var y = parseFloat(item.y);
-      console.log("type: "+item.type+" x: "+item.x+" y: "+item.y);
-      if (item.type == "points") {
-          //dot(x, y);
-          draw_map.lineTo(canvas.width/2 + Number(x), canvas.height/2 - Number(y), );
-          draw_map.stroke();
+    function test(item) {
+        var x = parseFloat(item.x);
+        var y = parseFloat(item.y);
+        console.log("type: " + item.type + " x: " + item.x + " y: " + item.y);
+        if (item.type == "points") {
+            //dot(x, y);
+            draw_map.lineTo(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y), );
+            draw_map.stroke();
 
-      } else if (item.type == "self_location") {
-          //line(x, y);
-          robot_pos.moveTo(x, y);
-          robot_pos.clearRect(canvas.width/2 + Number(robot_x), canvas.height/2 - Number(robot_y), 10, 10);
-          robot_pos.fillRect(canvas.width/2 + Number(x), canvas.height/2 - Number(y), 10, 10);
-          robot_pos.stroke();
-          robot_x = x;
-          robot_y = y;
-      }
+        } else if (item.type == "self_location") {
+            //line(x, y);
+            robot_pos.moveTo(x, y);
+            robot_pos.clearRect(canvas.width / 2 + Number(robot_x), canvas.height / 2 - Number(robot_y), 10, 10);
+            robot_pos.fillRect(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y), 10, 10);
+            robot_pos.stroke();
+            robot_x = x;
+            robot_y = y;
+        }
 
     }
 });

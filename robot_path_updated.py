@@ -299,7 +299,7 @@ def turn_right_concave():
     moveLEFT(300, 1000)
     time.sleep(2)
     # Try removing this final moving backward and see how it goes
-    # moveBACKWARD(300, 1000)
+    moveBACKWARD(300, 1000)
 
 
 def find_new_wall(distance):
@@ -432,8 +432,9 @@ def long_wall_loop():
     counter = 0
     while True:
         if counter%2 ==0 and counter != 0:
-            veer_slightly_right(150, 500)
-            time.sleep(0.5)
+            moveLEFT(300, 1000)
+            #veer_slightly_right(150, 500)
+            time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
 
@@ -454,7 +455,8 @@ def long_wall_loop():
             return turn_left
 
         elif new_front <= front_threshold:
-            veer_slightly_right(150, 1000)
+            # veer_slightly_right(150, 1000)
+            moveLEFT(300, 1000)
             time.sleep(1)
             return turn_right
 
@@ -481,18 +483,21 @@ def wall_loop_2():
             return turn_left
 
         elif new_front <= front_threshold:
-            veer_slightly_right(150, 1000)
+            # veer_slightly_right(150, 1000)
+            moveLEFT(300, 1000)
             time.sleep(1)
             return turn_right
 
         elif err_check_too_far(new_left):
-            veer_slightly_left(200, 1000)
+            leftMotor.run_timed(speed_sp=200, time_sp=1000)
+            # veer_slightly_left(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
 
         elif err_check_too_close(new_left):
-            veer_slightly_right(200, 1000)
+            rightMotor.run_timed(speed_sp=-200, time_sp=1000)
+            # veer_slightly_right(200, 1000)
             time.sleep(1)
             move_right_approx_dist(0.5)
             time.sleep(1)
@@ -505,8 +510,10 @@ def to_next_wall_2(instruction):
         turn_left_convex()
         move_to_corner(150, "backwards", 20)
         time.sleep(2)
-        veer_slightly_right(150, 500)
-        time.sleep(0.5)
+        leftMotor.run_timed(speed_sp=300, time_sp=1000)
+        rightMotor.run_timed(speed_sp=150, time_sp=1000)
+        # veer_slightly_right(150, 500)
+        time.sleep(1)
     else:
         # print("turn right")
         # toSend("new_orientation", "Right")

@@ -7,7 +7,7 @@ import paramiko
 points = []
 lock = threading.Lock()
 
-address = "28:C2:DD:44:20:C8"
+mac_address = "28:C2:DD:44:20:C8"
 channel = 1
 size = 1024
 ssh = None
@@ -18,7 +18,7 @@ ssh = None
 def launch_TCP_server():
     global points
     s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-    s.bind((address, channel))
+    s.bind((mac_address, channel))
     s.listen(1)
     conn, addr = s.accept()
     print("Connection address:", addr)

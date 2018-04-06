@@ -109,12 +109,27 @@ body {
     height: 250px;
     z-index: 1;
     display: block;
-    top: 50%;
+    top: 30%;
     left: 15%;
     margin: -110px 0 0 -100px;
     border-radius: 5px;
 
     display: none;
+}
+
+#second-tab-values{
+    background: #f8f8f8;
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    z-index: 1;
+    display: block;
+    top: 76.5%;
+    left: 15%;
+    margin: -110px 0 0 -100px;
+    border-radius: 5px;
+    display: none;
+    overflow-y: scroll;
 }
 
 #third-tab {
@@ -172,11 +187,23 @@ body {
     width: 100%;
 }
 
+#another-scrollable-area{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
 #buttons-area {
     position: absolute;
     height: 150px;
     top: 430px;
     left: 26%;
+}
+
+.new-wall{
+    position: relative;
+    width: 100%;
+    height: 20px;
+    margin-top: 12px;
 }
 
 .location-set,
@@ -207,6 +234,23 @@ body {
     position: absolute;
     left: -60px;
     top: 20px;
+}
+
+.ui.right.pointing.label.output{
+    position: absolute;
+    left:5px;
+    margin-top: -10px;
+
+}
+.ui.divider{
+    top:20px;
+}
+
+.new-wall-values{
+    position: absolute;
+    left: 140px;
+    display: inline-block;
+    top: 11px;
 }
 
 #plus-icon {

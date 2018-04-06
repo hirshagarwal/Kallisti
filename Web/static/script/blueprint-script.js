@@ -47,6 +47,9 @@ $(document).ready(function() {
 
     var p = 0;
 
+    var all_points = [];
+    var used_length = 0;
+
     function drawBoard() {
         grid.beginPath();
         grid.strokeStyle = "lightgray";
@@ -64,6 +67,8 @@ $(document).ready(function() {
 
     var move_posX = canvasWidth / 2;
     var move_posY = canvasHeight / 2;
+
+    var no_name = 0;
 
     drawBoard();
 
@@ -119,6 +124,7 @@ $(document).ready(function() {
         } else {
             $("#first-tab").fadeOut();
             $("#second-tab").fadeIn();
+            $("#second-tab-values").fadeIn();
         }
 
 
@@ -275,11 +281,13 @@ $(document).ready(function() {
     $("#confirm-yes").on('click', function(event) {
         $("#first-tab").fadeOut();
         $("#second-tab").fadeIn();
+        $("#second-tab-values").fadeIn();
     });
 
     $("#draw-finish-button").on('click', function(event) {
         $("#third-tab").fadeOut();
         $("#second-tab").fadeIn();
+        $("#second-tab-values").fadeIn();
     });
 
 
@@ -320,6 +328,7 @@ $(document).ready(function() {
 
     $("#modify-button").on('click', function(event) {
         $("#second-tab").fadeOut();
+        $("#second-tab-values").fadeOut();
         if (third_tab_flag == 1) {
             $("#third-tab").fadeIn();
         } else {
@@ -452,17 +461,30 @@ $(document).ready(function() {
                         if (item.type == "point") {
                             //dot(x, y);
                             console.log("try drawing?");
-                            drawline(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y))
-                            // draw_map.beginPath();
-                            // draw_map.moveTo(point_x, point_y);
-                            // draw_map.strokeStyle = "blue";
-                            // draw_map.lineWidth = 3;
-                            // //draw_map.clearRect(canvas.width/2 + Number(point_x), canvas.height/2 - Number(point_y), 5, 5);
-                            // draw_map.lineTo(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y));
-                            // //draw_map.arc(x, y, 1, 0, 2 * Math.PI, true);
-                            // draw_map.stroke();
-                            // point_x = canvas.width / 2 + Number(x);
-                            // point_y = canvas.height / 2 - Number(y);
+                            drawline(canvas.width / 2 + Number(x), canvas.height / 2 - Number(y));
+                            all_points.push(item);
+                            if (all_points.length % 2 == 0 && all_points.length != 0 && all_points.length > used_length) {
+                                used_length = all_points.length;
+                                var start_point = all_points[all_points.length - 2];
+                                var end_point = all_points[all_points.length - 1];
+                                if (no_name == 0) {
+                                    no_name = 1;
+                                    $(".new-wall > p").last().text("start-point: (" + parseInt(start_point.x) + ", " + parseInt(start_point.y) + "), end-point: (" + parseInt(end_point.x) + ", " + parseInt(end_point.y) + ")");
+                                } else {
+                                    var new_values = "start-point: (" + parseInt(start_point.x) + ", " + parseInt(start_point.y) + "), end-point: (" + parseInt(end_point.x) + ", " + parseInt(end_point.y) + ")";
+
+                                    var new_wall = $(".new-wall").last().clone(true);
+                                    $(".new-wall").after(new_wall);
+                                    $(".new-wall > p").last().text(new_values);
+                                    $(".new-wall").last().fadeIn();
+
+                                }
+
+                                // if($(".new-wall").length==5)
+                                //      $("#another-scrollable-area").css('overflow-y', 'scroll');
+
+                            }
+
 
                         } else if (item.type == "self_location") {
                             //line(x, y);
